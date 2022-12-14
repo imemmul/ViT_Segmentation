@@ -1,13 +1,13 @@
 # dataset settings
-dataset_type = 'EddyDataset'
-data_root = "/home/emir/Desktop/dev/dataset_eddy/data4test/"
+dataset_type = 'COCOStuffDataset'
+data_root = 'data/coco_stuff10k'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
-crop_size = (640, 640)
+crop_size = (512, 512)
 train_pipeline = [
-    dict(type='LoadImageFromFile'), # this will be change should convert mat files to img
+    dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', reduce_zero_label=True),
-    dict(type='Resize', img_scale=(2560, 640), ratio_range=(0.5, 2.0)),
+    dict(type='Resize', img_scale=(2048, 512), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
@@ -20,7 +20,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(2560, 640),
+        img_scale=(2048, 512),
         # img_ratios=[0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
         flip=False,
         transforms=[
@@ -32,23 +32,26 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=4,
-    workers_per_gpu=4,
+    samples_per_gpu=2,
+    workers_per_gpu=2,
     train=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='data/',
-        ann_dir='label/',
+        reduce_zero_label=True,
+        img_dir='images/train2014',
+        ann_dir='annotations/train2014',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='aug_data/',
-        ann_dir='aug_label/',
+        reduce_zero_label=True,
+        img_dir='images/test2014',
+        ann_dir='annotations/test2014',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='aug_data/',
-        ann_dir='aug_label/',
+        reduce_zero_label=True,
+        img_dir='images/test2014',
+        ann_dir='annotations/test2014',
         pipeline=test_pipeline))
