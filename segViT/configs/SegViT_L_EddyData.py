@@ -8,7 +8,7 @@ in_channels = 1024
 img_size = 640
 gpu_ids = range(1)
 seed = 42
-#checkpoint = './pretrained/vit_large_p16_384_20220308-d4efb41d.pth'
+checkpoint = '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output_dir'
 device = 'cuda'
 work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output_dir"
 out_indices = [7, 15, 23]
@@ -29,7 +29,7 @@ model = dict(
         num_heads=16,
         use_stages=len(out_indices),
         loss_decode=dict(
-            type='ATMLoss', num_classes=150, dec_layers=len(out_indices), loss_weight=1.0),
+            type='ATMLoss', num_classes=2, dec_layers=len(out_indices), loss_weight=1.0),
     ),
     test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(608, 608)),
 )
