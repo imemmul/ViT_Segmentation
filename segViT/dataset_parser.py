@@ -88,4 +88,36 @@ class EddyDataset(Dataset):
         img_y = img_file["vySample"]
         input_img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
         mask_img = mpimg.imread(self.mask_image_dir + self.masks[index])
-        return input_img, mask_img    
+        return input_img, mask_img
+
+def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir):
+    all_dirs = os.listdir(dataset_dir)
+    split_len = int(split*len(all_dirs))
+    train_dirs = sorted(all_dirs)[0:split_len]
+    valid_dirs = sorted(all_dirs)[split_len:]
+    #converting starts
+    for dir in train_dirs:
+        img_dir = dataset_dir + dir
+        mat = sio.loadmat(img_dir)
+        matX = mat["vxSample"]
+        matY = mat["vySample"]
+        save_dir = train_dir + dir[:-3] + "png"
+        print(f"converting {dir} to {dir[:-3]}png in {train_dir}")
+        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+        mpimg.imsave(save_dir, con_arr)
+    for dir in valid_dirs:
+        img_dir = dataset_dir + dir
+        mat = sio.loadmat(img_dir)
+        matX = mat["vxSample"]
+        matY = mat["vySample"]
+        print(f"converting {dir} to {dir[:-3]}png in {valid_dir}")
+        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+        save_dir = valid_dir + dir[:-3] + "png"
+        mpimg.imsave(save_dir, con_arr)
+    print("--Converting finished--")
+
+if __name__ == "__main__":
+    dataset_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/data/"
+    train_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/train_data/"
+    valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/valid_data/"
+    convert_mat_to_img(dataset_dir=dataset_dir, train_dir=train_dir, valid_dir=valid_dir, split=0.85)
