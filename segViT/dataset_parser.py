@@ -5,6 +5,16 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Dataset
 import scipy.io as sio
 import matplotlib.image as mpimg
+import os.path as osp
+
+
+
+import mmcv
+import numpy as np
+from PIL import Image
+
+from mmseg.datasets.builder import DATASETS
+from mmseg.datasets.custom import CustomDataset
 
 NUM_WORKERS = os.cpu_count()
 
@@ -90,34 +100,160 @@ class EddyDataset(Dataset):
         mask_img = mpimg.imread(self.mask_image_dir + self.masks[index])
         return input_img, mask_img
 
-def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir):
+
+
+
+import mmcv
+import numpy as np
+from PIL import Image
+
+from mmseg.datasets.builder import DATASETS
+from mmseg.datasets.custom import CustomDataset
+
+@DATASETS.register_module()
+class EddyDatasetREGISTER(CustomDataset):
+    """ADE20K dataset.
+
+    In segmentation map annotation for ADE20K, 0 stands for background, which
+    is not included in 150 categories. ``reduce_zero_label`` is fixed to True.
+    The ``img_suffix`` is fixed to '.jpg' and ``seg_map_suffix`` is fixed to
+    '.png'.
+    """
+    CLASSES = ('eddy', 'not-eddy')
+
+    PALETTE = [[120, 120, 120], [180, 120, 120]]
+
+    def __init__(self, **kwargs):
+        super(EddyDatasetREGISTER, self).__init__(
+            img_suffix='.png',
+            seg_map_suffix='.png',
+            reduce_zero_label=True,
+            **kwargs)
+
+    def results2img(self, results, imgfile_prefix, to_label_id, indices=None):
+        """Write the segmentation results to images.
+
+        Args:
+            results (list[ndarray]): Testing results of the
+                dataset.
+            imgfile_prefix (str): The filename prefix of the png files.
+                If the prefix is "somepath/xxx",
+                the png files will be named "somepath/xxx.png".
+            to_label_id (bool): whether convert output to label_id for
+                submission.
+            indices (list[int], optional): Indices of input results, if not
+                set, all the indices of the dataset will be used.
+                Default: None.
+
+        Returns:
+            list[str: str]: result txt files which contains corresponding
+            semantic segmentation images.
+        """
+        if indices is None:
+            indices = list(range(len(self)))
+
+        mmcv.mkdir_or_exist(imgfile_prefix)
+        result_files = []
+        for result, idx in zip(results, indices):
+
+            filename = self.img_infos[idx]['filename']
+            basename = osp.splitext(osp.basename(filename))[0]
+
+            png_filename = osp.join(imgfile_prefix, f'{basename}.png')
+
+            # The  index range of official requirement is from 0 to 150.
+            # But the index range of output is from 0 to 149.
+            # That is because we set reduce_zero_label=True.
+            result = result + 1
+
+            output = Image.fromarray(result.astype(np.uint8))
+            output.save(png_filename)
+            result_files.append(png_filename)
+
+        return result_files
+
+    def format_results(self,
+                       results,
+                       imgfile_prefix,
+                       to_label_id=True,
+                       indices=None):
+        """Format the results into dir (standard format for ade20k evaluation).
+
+        Args:
+            results (list): Testing results of the dataset.
+            imgfile_prefix (str | None): The prefix of images files. It
+                includes the file path and the prefix of filename, e.g.,
+                "a/b/prefix".
+            to_label_id (bool): whether convert output to label_id for
+                submission. Default: False
+            indices (list[int], optional): Indices of input results, if not
+                set, all the indices of the dataset will be used.
+                Default: None.
+
+        Returns:
+            tuple: (result_files, tmp_dir), result_files is a list containing
+               the image paths, tmp_dir is the temporal directory created
+                for saving json/png files when img_prefix is not specified.
+        """
+
+        if indices is None:
+            indices = list(range(len(self)))
+
+        assert isinstance(results, list), 'results must be a list.'
+        assert isinstance(indices, list), 'indices must be a list.'
+
+        result_files = self.results2img(results, imgfile_prefix, to_label_id,
+                                        indices)
+        return result_files
+
+
+
+def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir, label_dir, train_annot_dir, valid_annot_dir):
     all_dirs = os.listdir(dataset_dir)
+    label_dirs = os.listdir(label_dir)
     split_len = int(split*len(all_dirs))
     train_dirs = sorted(all_dirs)[0:split_len]
     valid_dirs = sorted(all_dirs)[split_len:]
+    train_annot = sorted(label_dirs)[0:split_len]
+    valid_annot = sorted(label_dirs)[split_len:]
     #converting starts
-    for dir in train_dirs:
-        img_dir = dataset_dir + dir
-        mat = sio.loadmat(img_dir)
-        matX = mat["vxSample"]
-        matY = mat["vySample"]
-        save_dir = train_dir + dir[:-3] + "png"
-        print(f"converting {dir} to {dir[:-3]}png in {train_dir}")
-        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
-        mpimg.imsave(save_dir, con_arr)
-    for dir in valid_dirs:
-        img_dir = dataset_dir + dir
-        mat = sio.loadmat(img_dir)
-        matX = mat["vxSample"]
-        matY = mat["vySample"]
-        print(f"converting {dir} to {dir[:-3]}png in {valid_dir}")
-        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
-        save_dir = valid_dir + dir[:-3] + "png"
-        mpimg.imsave(save_dir, con_arr)
+    # for dir in train_dirs:
+    #     img_dir = dataset_dir + dir
+    #     mat = sio.loadmat(img_dir)
+    #     matX = mat["vxSample"]
+    #     matY = mat["vySample"]
+    #     save_dir = train_dir + dir[:-3] + "png"
+    #     print(f"converting {dir} to {dir[:-3]}png in {train_dir}")
+    #     con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+    #     mpimg.imsave(save_dir, con_arr)
+    # for dir in valid_dirs:
+    #     img_dir = dataset_dir + dir
+    #     mat = sio.loadmat(img_dir)
+    #     matX = mat["vxSample"]
+    #     matY = mat["vySample"]
+    #     print(f"converting {dir} to {dir[:-3]}png in {valid_dir}")
+    #     con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+    #     save_dir = valid_dir + dir[:-3] + "png"
+    #     mpimg.imsave(save_dir, con_arr)
+    for dir in train_annot:
+        img_dir = label_dir + dir
+        img = mpimg.imread(img_dir)
+        save_dir = train_annot_dir + dir
+        print(f"converting {dir} to in {save_dir}")
+        mpimg.imsave(save_dir, img)
+    for dir in valid_annot:
+        img_dir = label_dir + dir
+        img = mpimg.imread(img_dir)
+        save_dir = valid_annot_dir + dir
+        print(f"converting {dir} to in {save_dir}")
+        mpimg.imsave(save_dir, img)
     print("--Converting finished--")
 
 if __name__ == "__main__":
     dataset_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/data/"
     train_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/train_data/"
     valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/valid_data/"
-    convert_mat_to_img(dataset_dir=dataset_dir, train_dir=train_dir, valid_dir=valid_dir, split=0.85)
+    label_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/label/"
+    train_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/train_annot/"
+    valid_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/valid_annot/"
+    convert_mat_to_img(dataset_dir=dataset_dir, train_dir=train_dir, valid_dir=valid_dir, split=0.85, label_dir=label_dir, train_annot_dir=train_annot_dir, valid_annot_dir=valid_annot_dir)

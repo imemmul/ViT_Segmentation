@@ -1,8 +1,8 @@
 _base_ = [
-    '../configs/_base_/models/seg_vit-b16.py',
-    #'../_base_/datasets/ade20k_640x640.py',
-     '../configs/_base_/default_runtime.py',
-    '../configs/_base_/schedules/schedule_160k.py'
+    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/models/seg_vit-b16.py',
+    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/datasets/eddy_640x640.py',
+    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/default_runtime.py',
+    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/schedules/schedule_160k.py'
 ]
 in_channels = 1024
 img_size = 640
@@ -10,7 +10,7 @@ gpu_ids = range(1)
 seed = 42
 checkpoint = '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output_dir'
 device = 'cuda'
-work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output_dir"
+work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output_dir/"
 out_indices = [7, 15, 23]
 model = dict(
     #pretrained=checkpoint,
