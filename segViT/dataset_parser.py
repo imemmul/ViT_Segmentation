@@ -217,43 +217,43 @@ def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir, label_dir, trai
     train_annot = sorted(label_dirs)[0:split_len]
     valid_annot = sorted(label_dirs)[split_len:]
     #converting starts
-    # for dir in train_dirs:
-    #     img_dir = dataset_dir + dir
-    #     mat = sio.loadmat(img_dir)
-    #     matX = mat["vxSample"]
-    #     matY = mat["vySample"]
-    #     save_dir = train_dir + dir[:-3] + "png"
-    #     print(f"converting {dir} to {dir[:-3]}png in {train_dir}")
-    #     con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
-    #     mpimg.imsave(save_dir, con_arr)
-    # for dir in valid_dirs:
-    #     img_dir = dataset_dir + dir
-    #     mat = sio.loadmat(img_dir)
-    #     matX = mat["vxSample"]
-    #     matY = mat["vySample"]
-    #     print(f"converting {dir} to {dir[:-3]}png in {valid_dir}")
-    #     con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
-    #     save_dir = valid_dir + dir[:-3] + "png"
-    #     mpimg.imsave(save_dir, con_arr)
-    for dir in train_annot:
-        img_dir = label_dir + dir
-        img = mpimg.imread(img_dir)
-        save_dir = train_annot_dir + dir
-        print(f"converting {dir} to in {save_dir}")
-        mpimg.imsave(save_dir, img)
-    for dir in valid_annot:
-        img_dir = label_dir + dir
-        img = mpimg.imread(img_dir)
-        save_dir = valid_annot_dir + dir
-        print(f"converting {dir} to in {save_dir}")
-        mpimg.imsave(save_dir, img)
-    print("--Converting finished--")
+    for dir in train_dirs:
+        img_dir = dataset_dir + dir
+        mat = sio.loadmat(img_dir)
+        matX = mat["vxSample"]
+        matY = mat["vySample"]
+        save_dir = train_dir + dir[:-3] + "png"
+        print(f"converting {dir} to {dir[:-3]}png in {train_dir}")
+        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+        mpimg.imsave(save_dir, con_arr)
+    for dir in valid_dirs:
+        img_dir = dataset_dir + dir
+        mat = sio.loadmat(img_dir)
+        matX = mat["vxSample"]
+        matY = mat["vySample"]
+        print(f"converting {dir} to {dir[:-3]}png in {valid_dir}")
+        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+        save_dir = valid_dir + dir[:-3] + "png"
+        mpimg.imsave(save_dir, con_arr)
+    # for dir in train_annot:
+    #     img_dir = label_dir + dir
+    #     img = mpimg.imread(img_dir)
+    #     save_dir = train_annot_dir + dir
+    #     print(f"converting {dir} to in {save_dir}")
+    #     mpimg.imsave(save_dir, img)
+    # for dir in valid_annot:
+    #     img_dir = label_dir + dir
+    #     img = mpimg.imread(img_dir)
+    #     save_dir = valid_annot_dir + dir
+    #     print(f"converting {dir} to in {save_dir}")
+    #     mpimg.imsave(save_dir, img)
+    # print("--Converting finished--")
 
 if __name__ == "__main__":
-    dataset_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/data/"
-    train_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/train_data/"
-    valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/valid_data/"
-    label_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/label/"
-    train_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/train_annot/"
-    valid_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/valid_annot/"
+    dataset_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
+    train_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_data/"
+    valid_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_data/"
+    label_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label/"
+    train_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_annot/"
+    valid_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_annot/"
     convert_mat_to_img(dataset_dir=dataset_dir, train_dir=train_dir, valid_dir=valid_dir, split=0.85, label_dir=label_dir, train_annot_dir=train_annot_dir, valid_annot_dir=valid_annot_dir)

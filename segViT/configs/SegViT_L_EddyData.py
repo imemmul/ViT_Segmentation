@@ -1,32 +1,32 @@
 _base_ = [
-    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/models/seg_vit-b16.py',
-    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/datasets/eddy_640x640.py',
-    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/default_runtime.py',
-    '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/_base_/schedules/schedule_160k.py'
+    './_base_/models/seg_vit-b16.py',
+    './_base_/datasets/eddy_640x640.py',
+    './_base_/default_runtime.py',
+    './_base_/schedules/schedule_160k.py'
 ]
 in_channels = 1024
 img_size = 640
 gpu_ids = range(1)
 seed = 42
-checkpoint = '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output_dir'
+checkpoint = '/home/emir/dev/segmentation_eddies/ViT_Segmentation/segViT/output/'
 device = 'cuda'
-work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output_dir/"
+work_dir = "/home/emir/dev/segmentation_eddies/ViT_Segmentation/segViT/output/"
 out_indices = [7, 15, 23]
 model = dict(
     #pretrained=checkpoint,
     backbone=dict(
         img_size=(640, 640),
         embed_dims=1024,
-        num_layers=24,
+        num_layers=12,
         drop_path_rate=0.3,
-        num_heads=16,
+        num_heads=8,
         out_indices=out_indices),
     decode_head=dict(
         img_size=img_size,
         in_channels=in_channels,
         channels=in_channels,
         embed_dims=in_channels // 2,
-        num_heads=16,
+        num_heads=8,
         use_stages=len(out_indices),
         loss_decode=dict(
             type='ATMLoss', num_classes=2, dec_layers=len(out_indices), loss_weight=1.0),

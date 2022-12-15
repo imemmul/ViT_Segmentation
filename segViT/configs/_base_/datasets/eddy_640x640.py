@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'EddyDatasetREGISTER'
-data_root = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/'
+data_root = '/home/emir/dev/segmentation_eddies/downloads/data4test/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 crop_size = (640, 640)
