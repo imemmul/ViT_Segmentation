@@ -1,4 +1,4 @@
-checkpoint = ''  # noqa
+checkpoint = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/ViT-B_16.npz'
 # model settings
 backbone_norm_cfg = dict(type='LN', eps=1e-6, requires_grad=True)
 img_size = 512
@@ -6,15 +6,15 @@ in_channels = 768
 out_indices = [5, 7, 11]
 model = dict(
     type='EncoderDecoder',
-    #pretrained=checkpoint,
+    pretrained=checkpoint,
     backbone=dict(
         type='VisionTransformer',
         img_size=(512, 512),
         patch_size=16,
         in_channels=3,
         embed_dims=768,
-        num_layers=3,
-        num_heads=6,
+        num_layers=12,
+        num_heads=12,
         drop_path_rate=0.1,
         attn_drop_rate=0.0,
         drop_rate=0.0,
@@ -31,7 +31,7 @@ model = dict(
         channels=in_channels,
         num_classes=2,
         num_layers=3,
-        num_heads=6,
+        num_heads=12,
         use_stages=len(out_indices),
         embed_dims=in_channels // 2,
         loss_decode=dict(

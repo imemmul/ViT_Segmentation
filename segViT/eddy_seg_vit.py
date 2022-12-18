@@ -34,7 +34,7 @@ except:
     
 
 def dataloader_handler(cfg):
-    datasets = [build_dataset(cfg.data.train)]
+    datasets = build_dataset(cfg.data.train)
     loader_cfg = dict(
         # cfg.gpus will be ignored if distributed
         num_gpus=len(cfg.gpu_ids),
@@ -50,7 +50,7 @@ def dataloader_handler(cfg):
     })
     train_loader_cfg = {**loader_cfg, **cfg.data.get('train_dataloader', {})}
     data_loaders = build_dataloader(datasets, **train_loader_cfg)
-    return data_loaders
+    return data_loaders, datasets
 
 
 
@@ -72,5 +72,5 @@ if __name__ == "__main__":
     seg_Vit_L_cfg = "./configs/SegViT_L_EddyData.py"
     cfg = Config.fromfile(seg_Vit_L_cfg)
     model = build_model(cfg)
-    dataloaders = dataloader_handler(cfg)
-    print(len(dataloaders))
+    dataloaders, datasets = dataloader_handler(cfg)
+    train_model(cfg=cfg, model=model, dataset=datasets)
