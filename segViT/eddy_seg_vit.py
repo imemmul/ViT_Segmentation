@@ -18,7 +18,8 @@ from mmseg.models import build_segmentor
 from mmseg.models.decode_heads.atm_head import ATMHead
 from mmseg.models.losses.atm_loss import ATMLoss
 from mmseg.datasets import build_dataloader, build_dataset
-
+import torch.nn as nn
+# OKAY SO BATCH SIZE SHOULD BE "1". 
 try:
     ATMHead() # initiliaze and add register to mmseg module
 except:
@@ -35,29 +36,11 @@ except:
 
 def dataloader_handler(cfg):
     datasets = build_dataset(cfg.data.train)
-    loader_cfg = dict(
-        # cfg.gpus will be ignored if distributed
-        num_gpus=len(cfg.gpu_ids),
-        dist=False,
-        seed=cfg.seed,
-        drop_last=True)
-    loader_cfg.update({
-        k: v
-        for k, v in cfg.data.items() if k not in [
-            'train', 'val', 'test', 'train_dataloader', 'val_dataloader',
-        '   test_dataloader'
-        ]
-    })
-    train_loader_cfg = {**loader_cfg, **cfg.data.get('train_dataloader', {})}
-    data_loaders = build_dataloader(datasets, **train_loader_cfg)
-    return data_loaders, datasets
-
-
-
+    return datasets
 
 
 def train_model(model, cfg, dataset):
-    train_segmentor(model=model, cfg=cfg, dataset=dataset, validate=True)
+    train_segmentor(model=model, cfg=cfg, dataset=dataset, validate=True, distributed=False)
 
 
 def build_model(cfg):
@@ -66,11 +49,47 @@ def build_model(cfg):
                         test_cfg=cfg.get('test_cfg'))
     return model
 
+def get_len_parameters(model):
+    len = 0
 
+    for param in model.parameters():
+        len += 1
+
+    return len
+
+
+def check_frozen_layers(model):
+    for param in model.parameters():
+        print(param.requires_grad)
+
+
+def defreeze_layers(model, num_layers):
+    """
+    this function gives a non freezed layers model.
+    """
+    count = 0
+    size = get_len_parameters(model)
+    for param in model.parameters():
+        param.requires_grad = False
+    
+    for param in model.parameters():
+        count += 1
+        if count >= (size - num_layers):
+            param.requires_grad = True
+    return model
 
 if __name__ == "__main__":
     seg_Vit_L_cfg = "./configs/SegViT_L_EddyData.py"
+    cp = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
     cfg = Config.fromfile(seg_Vit_L_cfg)
-    model = build_model(cfg)
-    dataloaders, datasets = dataloader_handler(cfg)
+    model = init_segmentor(config=cfg, checkpoint=cp, device=device) # checkpoint loaded.
+    print(model.decode_head.class_embed)
+    model.decode_head.class_embed.out_features = 2
+    print(model.decode_head.class_embed.out_features)
+    model = defreeze_layers(model=model, num_layers=20)
+    #check_frozen_layers(model)
+    #print(model)
+    #print(type(model))
+    datasets = build_dataset(cfg.data.train)
+    torch.cuda.synchronize()
     train_model(cfg=cfg, model=model, dataset=datasets)
