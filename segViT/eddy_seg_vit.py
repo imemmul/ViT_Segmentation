@@ -78,11 +78,19 @@ def defreeze_layers(model, num_layers):
             param.requires_grad = True
     return model
 
+def print_TODO():
+    """
+    To Learn where [6, 640, 640, 4] where 4 comes from ????? ?
+    try img_scale = None
+    IN segmentors/base.py check forward function takes 1, 3, 640, 640
+    """
+
 if __name__ == "__main__":
     seg_Vit_L_cfg = "./configs/SegViT_L_EddyData.py"
     cp = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
     cfg = Config.fromfile(seg_Vit_L_cfg)
     model = init_segmentor(config=cfg, checkpoint=cp, device=device) # checkpoint loaded.
+    #print(model)
     print(model.decode_head.class_embed)
     model.decode_head.class_embed.out_features = 2
     print(model.decode_head.class_embed.out_features)
@@ -91,5 +99,8 @@ if __name__ == "__main__":
     #print(model)
     #print(type(model))
     datasets = build_dataset(cfg.data.train)
-    torch.cuda.synchronize()
+    #torch.cuda.synchronize()
+    #print(cfg.data.train)
+    #print(datasets[0]['img'].size()) # images comes in correct shape
+    #print(datasets[0]['gt_semantic_seg'].size())
     train_model(cfg=cfg, model=model, dataset=datasets)

@@ -36,7 +36,7 @@ model = dict(
 
 # jax use different img norm cfg
 img_norm_cfg = dict(
-    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=True)
+    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False)
 crop_size = (640, 640)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
