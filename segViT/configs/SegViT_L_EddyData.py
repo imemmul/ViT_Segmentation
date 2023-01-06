@@ -15,7 +15,7 @@ out_indices = [7, 15, 23]
 model = dict(
     pretrained=checkpoint,
     backbone=dict(
-        img_size=(640, 640),
+        img_size=(256, 256),
         embed_dims=1024,
         num_layers=24,
         drop_path_rate=0.3,
@@ -31,17 +31,17 @@ model = dict(
         loss_decode=dict(
             type='ATMLoss', num_classes=150, dec_layers=len(out_indices), loss_weight=1.0),
     ),
-    test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(608, 608)),
+    test_cfg=dict(mode='slide', crop_size=(256, 256), stride=(208, 208)),
 )
 
 # jax use different img norm cfg
 img_norm_cfg = dict(
-    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False)
-crop_size = (640, 640)
+    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=True)
+crop_size = (256, 256)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', reduce_zero_label=True),
-    dict(type='Resize', img_scale=(2048, 640), ratio_range=(0.5, 2.0)),
+    dict(type='Resize', img_scale=(2048, 256), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
@@ -54,7 +54,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(2048, 640),
+        img_scale=(2048, 256),
         # img_ratios=[0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
         flip=False,
         transforms=[
