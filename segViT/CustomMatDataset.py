@@ -80,7 +80,7 @@ class CustomMatDataset(Dataset):
     def __init__(self,
                  pipeline,
                  img_dir,
-                 img_suffix='.jpg',
+                 img_suffix='.mat', # this edited in order to handle mat files
                  ann_dir=None,
                  seg_map_suffix='.png',
                  split=None,
@@ -158,7 +158,8 @@ class CustomMatDataset(Dataset):
         Returns:
             list[dict]: All image info of dataset.
         """
-
+        print(f"Annot dir {ann_dir}")
+        print(f"img dir {img_dir}")
         img_infos = []
         if split is not None:
             lines = mmcv.list_from_file(
@@ -174,18 +175,25 @@ class CustomMatDataset(Dataset):
             # may be should edit below for for mat files orrrrrrr
             for img in self.file_client.list_dir_or_file(
                     dir_path=img_dir,
-                    list_dir=False,
-                    suffix=img_suffix,
+                    list_dir=True,
+                    suffix=None,
                     recursive=True):
-                #print(f"img info for custom data {img}")
+                # print(f"img in for loop {img}")
+                # print(f"seg_map_suffix {seg_map_suffix}")
+                # print(f"img_suffix {img_suffix}")
                 img_info = dict(filename=img)
                 if ann_dir is not None:
-                    seg_map = img.replace(img_suffix, seg_map_suffix)
+                    #seg_map = img.replace(img_suffix, seg_map_suffix)
+                    seg_map = img[:-3] + "png"
+                    # print(f"Seg map {seg_map}")
                     img_info['ann'] = dict(seg_map=seg_map)
+                
+                # print(f"img_info {img_info}")
                 img_infos.append(img_info)
-            img_infos = sorted(img_infos, key=lambda x: x['filename'])
+            img_infos = sorted(img_infos, key=lambda x: x['filename']) # img infos len(img_infos) = 9180
 
         print_log(f'Loaded {len(img_infos)} images', logger=get_root_logger())
+        #print(img_infos) returns .mat and .png dict
         return img_infos
 
     def get_ann_info(self, idx):

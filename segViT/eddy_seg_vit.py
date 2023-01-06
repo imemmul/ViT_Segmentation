@@ -180,17 +180,18 @@ if __name__ == "__main__":
     print(model.decode_head.class_embed)
     model.decode_head.class_embed.out_features = 2
     print(model.decode_head.class_embed.out_features)
-    print(model)
+    #print(model) 
     #model = defreeze_layers(model=model, num_layers=20)
     #check_frozen_layers(model)
     #print(model)
     img_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
     annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label_grayscale/"
-    train_data = EddyDataset(input_image_dir=img_dir, mask_image_dir=annot_dir, split=0.85, train_bool=True)
-    valid_data = EddyDataset(input_image_dir=img_dir, mask_image_dir=annot_dir, split=0.85, train_bool=False)
-    train_dataloader, valid_dataloader, class_names = create_dataloaders(train_data=train_data, test_data=valid_data, is_data_exist=True, batch_size=BATCH_SIZE)
-    dataloaders = [train_dataloader, valid_dataloader]
+    #train_data = EddyDataset(input_image_dir=img_dir, mask_image_dir=annot_dir, split=0.85, train_bool=True)
+    #valid_data = EddyDataset(input_image_dir=img_dir, mask_image_dir=annot_dir, split=0.85, train_bool=False)
+    #train_dataloader, valid_dataloader, class_names = create_dataloaders(train_data=train_data, test_data=valid_data, is_data_exist=True, batch_size=BATCH_SIZE)
+    #dataloaders = [train_dataloader, valid_dataloader]
     #train_model(model=model, cfg=cfg, dataloaders=dataloaders, validate=True)
-    # print(cfg.data.train)
-    datasets = build_dataset(cfg.data.train)
+    #print(cfg.data.train)
+    
+    #datasets = build_dataset(cfg.data.train)
     #train_segmentor(model, cfg=cfg, dataset=datasets)

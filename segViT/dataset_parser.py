@@ -255,15 +255,43 @@ def convert_rgb_annot2_gray(convert_dir, converted_dir):
         print(f"Converting {dir} to Grayscale")
         img.save(converted_dir + dir)
         print(f"Saved {dir} to {converted_dir}")
+
+def split_mat_to_split(split, train_dir, valid_dir, ori_dir):
+    """
+    this method moves mat files into train and valid splits
+    """
+    dirs = os.listdir(ori_dir)
+    split_len = int(split*len(dirs))
+    train_dirs = sorted(dirs)[0:split_len]
+    valid_dirs = sorted(dirs)[split_len:]
+    import shutil
+    for dir in train_dirs:
+        src = ori_dir + dir
+        dst = train_dir + dir
+        shutil.move(src=src, dst=dst)
+        print(f"{src} is moved into {dst}")
+    for dir in valid_dirs:
+        src = ori_dir + dir
+        dst = valid_dir + dir
+        shutil.move(src=src, dst=dst)
+        print(f"{src} is moved into {dst}")
         
 
 if __name__ == "__main__":
-    dataset_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
-    train_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_data/"
-    valid_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_data/"
-    label_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label/"
-    train_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_annot/"
-    valid_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_annot/"
-    label_grayscale_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label_grayscale/"
+    # dataset_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
+    # train_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_data/"
+    # valid_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_data/"
+    # label_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label/"
+    # train_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_annot/"
+    # valid_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_annot/"
+    # label_grayscale_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label_grayscale/"
     #convert_mat_to_img(dataset_dir=dataset_dir, train_dir=label_grayscale_dir, valid_dir=valid_dir, split=0.85, label_dir=label_dir, train_annot_dir=train_annot_dir, valid_annot_dir=valid_annot_dir)
-    convert_rgb_annot2_gray(convert_dir=label_dir, converted_dir=label_grayscale_dir)
+    #convert_rgb_annot2_gray(convert_dir=label_dir, converted_dir=label_grayscale_dir)
+    split = 0.85
+    train_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_data_mat/"
+    valid_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_data_mat/"
+    ori_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
+    #split_mat_to_split(split=split, train_dir=train_dir, valid_dir=valid_dir, ori_dir=ori_dir)
+    print(len(os.listdir(train_dir)))
+    print(len(os.listdir(valid_dir)))
+    

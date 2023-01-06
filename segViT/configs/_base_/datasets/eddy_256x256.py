@@ -3,9 +3,10 @@ dataset_type = 'EddyDatasetREGISTER'
 data_root = '/home/emir/dev/segmentation_eddies/downloads/data4test/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+
 crop_size = (256, 256)
 train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    #dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', reduce_zero_label=False),
     dict(type='Resize', img_scale=(2048, 256), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
@@ -17,7 +18,7 @@ train_pipeline = [
     dict(type='Collect', keys=['img', 'gt_semantic_seg']),
 ]
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    #dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
         img_scale=(2048, 256),
@@ -37,18 +38,18 @@ data = dict(
     train=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='train_data/',
+        img_dir='train_data_mat/',
         ann_dir='train_annot/',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='valid_data/',
+        img_dir='valid_data_mat/',
         ann_dir='valid_annot/',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='valid_data/',
+        img_dir='valid_data_mat/',
         ann_dir='valid_annot/',
         pipeline=test_pipeline))
