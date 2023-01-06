@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader, Dataset
 import scipy.io as sio
 import matplotlib.image as mpimg
 import os.path as osp
+from CustomMatDataset import CustomMatDataset
 
 
 
@@ -37,14 +38,14 @@ def create_dataloaders(
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
-            pin_memory=True
+            pin_memory=False
         )
         test_dataloader = DataLoader(
             test_data,
             batch_size=batch_size,
             shuffle=False,
             num_workers=num_workers,
-            pin_memory=True
+            pin_memory=False
         )
     else:
         train_data = datasets.ImageFolder(train_dir, transform=transform)
@@ -111,7 +112,7 @@ from mmseg.datasets.builder import DATASETS
 from mmseg.datasets.custom import CustomDataset
 
 @DATASETS.register_module()
-class EddyDatasetREGISTER(CustomDataset):
+class EddyDatasetREGISTER(CustomMatDataset):
     """Eddy dataset.
     """
     CLASSES = ('eddy', 'not-eddy')
@@ -204,6 +205,7 @@ class EddyDatasetREGISTER(CustomDataset):
 
 
 
+
 def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir, label_dir, train_annot_dir, valid_annot_dir):
     all_dirs = os.listdir(dataset_dir)
     label_dirs = os.listdir(label_dir)
@@ -213,24 +215,24 @@ def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir, label_dir, trai
     train_annot = sorted(label_dirs)[0:split_len]
     valid_annot = sorted(label_dirs)[split_len:]
     #converting starts
-    for dir in train_dirs:
-        img_dir = dataset_dir + dir
-        mat = sio.loadmat(img_dir)
-        matX = mat["vxSample"]
-        matY = mat["vySample"]
-        save_dir = train_dir + dir[:-3] + "png"
-        print(f"converting {dir} to {dir[:-3]}png in {train_dir}")
-        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
-        mpimg.imsave(save_dir, con_arr)
-    for dir in valid_dirs:
-        img_dir = dataset_dir + dir
-        mat = sio.loadmat(img_dir)
-        matX = mat["vxSample"]
-        matY = mat["vySample"]
-        print(f"converting {dir} to {dir[:-3]}png in {valid_dir}")
-        con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
-        save_dir = valid_dir + dir[:-3] + "png"
-        mpimg.imsave(save_dir, con_arr)
+    # for dir in train_dirs:
+    #     img_dir = dataset_dir + dir
+    #     mat = sio.loadmat(img_dir)
+    #     matX = mat["vxSample"]
+    #     matY = mat["vySample"]
+    #     save_dir = train_dir + dir[:-3] + "png"
+    #     print(f"converting {dir} to {dir[:-3]}png in {train_dir}")
+    #     con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+    #     mpimg.imsave(save_dir, con_arr)
+    # for dir in valid_dirs:
+    #     img_dir = dataset_dir + dir
+    #     mat = sio.loadmat(img_dir)
+    #     matX = mat["vxSample"]
+    #     matY = mat["vySample"]
+    #     print(f"converting {dir} to {dir[:-3]}png in {valid_dir}")
+    #     con_arr = (np.stack((matX, matY, np.zeros(matX.shape)), -1) * 255).astype(np.uint8)
+    #     save_dir = valid_dir + dir[:-3] + "png"
+    #     mpimg.imsave(save_dir, con_arr)
     # for dir in train_annot:
     #     img_dir = label_dir + dir
     #     img = mpimg.imread(img_dir)
@@ -244,6 +246,16 @@ def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir, label_dir, trai
     #     print(f"converting {dir} to in {save_dir}")
     #     mpimg.imsave(save_dir, img)
     # print("--Converting finished--")
+    
+def convert_rgb_annot2_gray(convert_dir, converted_dir):
+    convert_dirs = os.listdir(convert_dir)
+    for dir in convert_dirs:
+        ori_dir = convert_dir + dir
+        img = Image.open(ori_dir).convert('L')
+        print(f"Converting {dir} to Grayscale")
+        img.save(converted_dir + dir)
+        print(f"Saved {dir} to {converted_dir}")
+        
 
 if __name__ == "__main__":
     dataset_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
@@ -252,4 +264,6 @@ if __name__ == "__main__":
     label_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label/"
     train_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_annot/"
     valid_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_annot/"
-    convert_mat_to_img(dataset_dir=dataset_dir, train_dir=train_dir, valid_dir=valid_dir, split=0.85, label_dir=label_dir, train_annot_dir=train_annot_dir, valid_annot_dir=valid_annot_dir)
+    label_grayscale_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label_grayscale/"
+    #convert_mat_to_img(dataset_dir=dataset_dir, train_dir=label_grayscale_dir, valid_dir=valid_dir, split=0.85, label_dir=label_dir, train_annot_dir=train_annot_dir, valid_annot_dir=valid_annot_dir)
+    convert_rgb_annot2_gray(convert_dir=label_dir, converted_dir=label_grayscale_dir)
