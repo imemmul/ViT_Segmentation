@@ -171,18 +171,42 @@ def train_model(model, cfg, dataloaders, validate:True):
         runner.load_checkpoint(cfg.load_from)
     runner.run([train_dataloader], cfg.workflow)
 
+import mmcv
+from mmcv.runner import load_checkpoint
+def load_model(config, checkpoint, device, CLASSES, PALETTE):
+    if isinstance(config, str):
+        config = mmcv.Config.fromfile(config)
+    elif not isinstance(config, mmcv.Config):
+        raise TypeError('config must be a filename or Config object, '
+                        'but got {}'.format(type(config)))
+    config.model.pretrained = None
+    config.model.train_cfg = None
+    model = build_segmentor(config.model, test_cfg=config.get('test_cfg'))
+    if checkpoint is not None:
+        checkpoint = load_checkpoint(model, checkpoint, map_location='cpu')
+        # print(checkpoint)
+        model.CLASSES = CLASSES
+        model.PALETTE = PALETTE
+    model.cfg = config  # save the config in the model for convenience
+    model.to(device)
+    model.eval()
+    return model
+
 
 
 if __name__ == "__main__":
     seg_Vit_L_cfg = "./configs/SegViT_L_EddyData.py"
-    #cp = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
+    cp = '/home/emir/dev/segmentation_eddies/output_segvit/iter_48000.pth'
+    
     cfg = Config.fromfile(seg_Vit_L_cfg)
     cfg = set_batch_size(cfg, 8) # batch size of 8
-    #model = init_segmentor(config=cfg, checkpoint=cp, device=device) # checkpoint loaded.
+    # classes = EddyDatasetREGISTER.CLASSES
+    # palette = EddyDatasetREGISTER.PALETTE
+    # model = load_model(config=cfg, checkpoint=cp, device=device, CLASSES=classes, PALETTE=palette) # checkpoint loaded.
     model = build_segmentor(cfg=cfg.model)
     print(model.decode_head.class_embed)
     model.decode_head.class_embed.out_features = 2
     print(model.decode_head.class_embed.out_features)
     print(model)
     datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
-    train_segmentor(model, cfg=cfg, dataset=datasets)
+    train_segmentor(model, cfg=cfg, dataset=datasets, validate=True)
