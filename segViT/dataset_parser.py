@@ -276,6 +276,32 @@ def split_mat_to_split(split, train_dir, valid_dir, ori_dir):
         shutil.move(src=src, dst=dst)
         print(f"{src} is moved into {dst}")
         
+def max_min_values(img, obj):
+    if isinstance(obj, staticVariable):
+        if(obj.max < img.max()):
+            obj.max = img.max()
+        if(obj.min > img.min()):
+            obj.min = img.min()
+
+
+class staticVariable():
+    max = 0
+    min = 0
+
+
+def load_mat_img(dir):
+    img_file = sio.loadmat(dir)
+    img_x = img_file["vxSample"]
+    img_y = img_file["vySample"]
+    
+    img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
+    #if self.to_float32:
+    img = img.astype(np.float32)
+    #print(f"new img {img}")
+    # print(f"max value in img {img.max()}")
+    # print(f"min value in img {img.min()}")
+    return img
+
 
 if __name__ == "__main__":
     # dataset_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
@@ -292,6 +318,22 @@ if __name__ == "__main__":
     valid_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_data_mat/"
     ori_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
     #split_mat_to_split(split=split, train_dir=train_dir, valid_dir=valid_dir, ori_dir=ori_dir)
-    print(len(os.listdir(train_dir)))
-    print(len(os.listdir(valid_dir)))
+    # print(len(os.listdir(train_dir)))
+    # print(len(os.listdir(valid_dir)))
+    variables = staticVariable()
+    variables_rescale = staticVariable()
+    max = 0
+    for dir in os.listdir(train_dir):
+        img = load_mat_img(train_dir+dir)
+        max_min_values(img, variables)
+    print(f"Max value in imgs {variables.max}")
+    print(f"Min value in imgs {variables.min}")
+    for dir in os.listdir(train_dir):
+        img = load_mat_img(train_dir+dir)
+        new_img = (img - variables.min) / (variables.max - variables.min)
+        max_min_values(new_img, variables_rescale)
+        
+    print(f"after rescaling max value in imgs {variables_rescale.max}")
+    print(f"after rescaling min value in imgs {variables_rescale.min}")    
+    my_list = [-1, -2, 4, 5 ,7]
     

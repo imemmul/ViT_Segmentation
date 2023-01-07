@@ -203,7 +203,7 @@ if __name__ == "__main__":
     # classes = EddyDatasetREGISTER.CLASSES
     # palette = EddyDatasetREGISTER.PALETTE
     # model = load_model(config=cfg, checkpoint=cp, device=device, CLASSES=classes, PALETTE=palette) # checkpoint loaded.
-    model = build_segmentor(cfg=cfg.model)
+    model = init_segmentor(cfg, device=device)
     print(model.decode_head.class_embed)
     model.decode_head.class_embed.out_features = 2
     print(model.decode_head.class_embed.out_features)
