@@ -81,7 +81,8 @@ def print_TODO():
     +try img_scale = None
     +IN segmentors/base.py check forward function takes 1, 3, 640, 640
     +should convert all rgb images to grayscale
-    -try to load dataset without converting to png.
+    +try to load dataset without converting to png.
+    +change somethings in architecture
     """
 
 
@@ -91,6 +92,9 @@ def set_batch_size(cfg, batch_size):
     return cfg
 
 def train_model(model, cfg, dataloaders, validate:True):
+    """
+    this method aims to train model 
+    """
     distributed = False
     logger = get_root_logger(cfg.log_level)
     # The default loader config
@@ -171,27 +175,14 @@ def train_model(model, cfg, dataloaders, validate:True):
 
 if __name__ == "__main__":
     seg_Vit_L_cfg = "./configs/SegViT_L_EddyData.py"
-    cp = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
+    #cp = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
     cfg = Config.fromfile(seg_Vit_L_cfg)
-    cfg = set_batch_size(cfg, 8)
-    model = init_segmentor(config=cfg, checkpoint=cp, device=device) # checkpoint loaded.
-    #print(model)
-    #Changing output channels in order to fit to EddyData
+    cfg = set_batch_size(cfg, 8) # batch size of 8
+    #model = init_segmentor(config=cfg, checkpoint=cp, device=device) # checkpoint loaded.
+    model = build_segmentor(cfg=cfg.model)
     print(model.decode_head.class_embed)
     model.decode_head.class_embed.out_features = 2
     print(model.decode_head.class_embed.out_features)
-    #print(model) 
-    #model = defreeze_layers(model=model, num_layers=20)
-    #check_frozen_layers(model)
-    #print(model)
-    img_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
-    annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label_grayscale/"
-    #train_data = EddyDataset(input_image_dir=img_dir, mask_image_dir=annot_dir, split=0.85, train_bool=True)
-    #valid_data = EddyDataset(input_image_dir=img_dir, mask_image_dir=annot_dir, split=0.85, train_bool=False)
-    #train_dataloader, valid_dataloader, class_names = create_dataloaders(train_data=train_data, test_data=valid_data, is_data_exist=True, batch_size=BATCH_SIZE)
-    #dataloaders = [train_dataloader, valid_dataloader]
-    #train_model(model=model, cfg=cfg, dataloaders=dataloaders, validate=True)
-    #print(cfg.data.train)
-    
-    #datasets = build_dataset(cfg.data.train)
-    #train_segmentor(model, cfg=cfg, dataset=datasets)
+    print(model)
+    datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
+    train_segmentor(model, cfg=cfg, dataset=datasets)
