@@ -247,14 +247,25 @@ def convert_mat_to_img(dataset_dir, split, train_dir, valid_dir, label_dir, trai
     #     mpimg.imsave(save_dir, img)
     # print("--Converting finished--")
     
-def convert_rgb_annot2_gray(convert_dir, converted_dir):
-    convert_dirs = os.listdir(convert_dir)
-    for dir in convert_dirs:
-        ori_dir = convert_dir + dir
-        img = Image.open(ori_dir).convert('L')
+def convert_rgb_annot2_gray_split(convert_dir, split, train_converted, valid_converted):
+    dirs = os.listdir(convert_dir)
+    split_len = int(split*len(dirs))
+    train_dirs = sorted(dirs)[0:split_len]
+    valid_dirs = sorted(dirs)[split_len:]
+    for dir in train_dirs:
+        ori_dir = train_converted + dir
+        src = convert_dir + dir
+        img = Image.open(src).convert('L')
         print(f"Converting {dir} to Grayscale")
-        img.save(converted_dir + dir)
-        print(f"Saved {dir} to {converted_dir}")
+        img.save(ori_dir)
+        print(f"Saved {dir} to {ori_dir}")
+    for dir in valid_dirs:
+        ori_dir = valid_converted + dir
+        src = convert_dir + dir
+        img = Image.open(src).convert('L')
+        print(f"Converting {dir} to Grayscale")
+        img.save(ori_dir)
+        print(f"Saved {dir} to {ori_dir}")
 
 def split_mat_to_split(split, train_dir, valid_dir, ori_dir):
     """
@@ -283,11 +294,19 @@ def max_min_values(img, obj):
         if(obj.min > img.min()):
             obj.min = img.min()
 
+def convert_rgb_to_gray(ori_dir):
+    dirs = os.listdir(ori_dir)
+    for dir in dirs:
+        img = Image.open(ori_dir+dir).convert('L')
+        print(f"Converting {dir} to Grayscale")
+        img.save(ori_dir+dir)
+        print(f"Saved {dir} to {ori_dir+dir}")
+        
+
 
 class staticVariable():
     max = 0
     min = 0
-
 
 def load_mat_img(dir):
     img_file = sio.loadmat(dir)
@@ -304,36 +323,35 @@ def load_mat_img(dir):
 
 
 if __name__ == "__main__":
-    # dataset_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
-    # train_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_data/"
-    # valid_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_data/"
-    # label_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label/"
-    # train_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_annot/"
-    # valid_annot_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_annot/"
-    # label_grayscale_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/label_grayscale/"
+    dataset_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/data/"
+    train_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_data_mat/"
+    valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_mat/"
+    label_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/label/"
+    train_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_label/"
+    valid_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label/"
+    train_annot_rgb = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/train_annot/"
+    valid_annot_rgb = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/valid_annot/"
     #convert_mat_to_img(dataset_dir=dataset_dir, train_dir=label_grayscale_dir, valid_dir=valid_dir, split=0.85, label_dir=label_dir, train_annot_dir=train_annot_dir, valid_annot_dir=valid_annot_dir)
-    #convert_rgb_annot2_gray(convert_dir=label_dir, converted_dir=label_grayscale_dir)
     split = 0.85
-    train_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/train_data_mat/"
-    valid_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/valid_data_mat/"
-    ori_dir = "/home/emir/dev/segmentation_eddies/downloads/data4test/data/"
-    #split_mat_to_split(split=split, train_dir=train_dir, valid_dir=valid_dir, ori_dir=ori_dir)
-    # print(len(os.listdir(train_dir)))
-    # print(len(os.listdir(valid_dir)))
-    variables = staticVariable()
-    variables_rescale = staticVariable()
-    max = 0
-    for dir in os.listdir(train_dir):
-        img = load_mat_img(train_dir+dir)
-        max_min_values(img, variables)
-    print(f"Max value in imgs {variables.max}")
-    print(f"Min value in imgs {variables.min}")
-    for dir in os.listdir(train_dir):
-        img = load_mat_img(train_dir+dir)
-        new_img = (img - variables.min) / (variables.max - variables.min)
-        max_min_values(new_img, variables_rescale)
+    # split_mat_to_split(split=split, train_dir=train_dir, valid_dir=valid_dir, ori_dir=dataset_dir)
+    print(len(os.listdir(valid_annot_dir)))
+    convert_rgb_to_gray(ori_dir=train_annot_rgb)
+    convert_rgb_to_gray(ori_dir=valid_annot_rgb)
+    #convert_rgb_annot2_gray_split(convert_dir=label_dir, split=split, train_converted=train_annot_dir, valid_converted=valid_annot_dir)
+    # variables = staticVariable()
+    # variables_rescale = staticVariable()
+    # max = 0
+    # for dir in os.listdir(train_dir):
+    #     img = load_mat_img(train_dir+dir)
+    #     max_min_values(img, variables)
+    # print(f"Max value in imgs {variables.max}")
+    # print(f"Min value in imgs {variables.min}")
+    # for dir in os.listdir(train_dir):
+    #     img = load_mat_img(train_dir+dir)
+    #     new_img = (img - variables.min) / (variables.max - variables.min)
+    #     max_min_values(new_img, variables_rescale)
         
-    print(f"after rescaling max value in imgs {variables_rescale.max}")
-    print(f"after rescaling min value in imgs {variables_rescale.min}")    
-    my_list = [-1, -2, 4, 5 ,7]
+    # print(f"after rescaling max value in imgs {variables_rescale.max}")
+    # print(f"after rescaling min value in imgs {variables_rescale.min}")    
+    # my_list = [-1, -2, 4, 5 ,7]
     

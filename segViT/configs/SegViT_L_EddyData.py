@@ -8,12 +8,13 @@ in_channels = 1024
 img_size = 256
 gpu_ids = range(1)
 seed = 42
-checkpoint = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
+#checkpoint = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
 device = 'cuda'
-work_dir = "/home/emir/dev/segmentation_eddies/ViT_Segmentation/segViT/output/"
+#work_dir = "/home/emir/dev/segmentation_eddies/ViT_Segmentation/segViT/output/"
+work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output"
 out_indices = [7, 15, 23]
 model = dict(
-    pretrained=checkpoint,
+    #pretrained=checkpoint,
     backbone=dict(
         img_size=(256, 256),
         embed_dims=1024,
@@ -29,7 +30,7 @@ model = dict(
         num_heads=16,
         use_stages=len(out_indices),
         loss_decode=dict(
-            type='ATMLoss', num_classes=150, dec_layers=len(out_indices), loss_weight=1.0),
+            type='ATMLoss', num_classes=1, dec_layers=len(out_indices), loss_weight=1.0),
     ),
     test_cfg=dict(mode='slide', crop_size=(256, 256), stride=(208, 208)),
 )
@@ -40,7 +41,7 @@ img_norm_cfg = dict(
 crop_size = (256, 256)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', reduce_zero_label=True),
+    dict(type='LoadAnnotations'),
     dict(type='Resize', img_scale=(2048, 256), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),

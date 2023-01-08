@@ -195,18 +195,16 @@ def load_model(config, checkpoint, device, CLASSES, PALETTE):
 
 
 if __name__ == "__main__":
-    seg_Vit_L_cfg = "./configs/SegViT_L_EddyData.py"
-    cp = '/home/emir/dev/segmentation_eddies/output_segvit/iter_48000.pth'
-    
+    seg_Vit_L_cfg = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/SegViT_L_EddyData.py"
     cfg = Config.fromfile(seg_Vit_L_cfg)
-    cfg = set_batch_size(cfg, 8) # batch size of 8
+    cfg = set_batch_size(cfg, 1) # batch size of 8
     # classes = EddyDatasetREGISTER.CLASSES
     # palette = EddyDatasetREGISTER.PALETTE
     # model = load_model(config=cfg, checkpoint=cp, device=device, CLASSES=classes, PALETTE=palette) # checkpoint loaded.
     model = init_segmentor(cfg, device=device)
-    print(model.decode_head.class_embed)
-    model.decode_head.class_embed.out_features = 2
-    print(model.decode_head.class_embed.out_features)
+    # print(model.decode_head.class_embed)
+    # model.decode_head.class_embed.out_features = 2
+    # print(model.decode_head.class_embed.out_features)
     print(model)
     datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
     train_segmentor(model, cfg=cfg, dataset=datasets, validate=True)

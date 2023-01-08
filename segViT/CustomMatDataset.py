@@ -327,7 +327,7 @@ class CustomMatDataset(Dataset):
                     # https://github.com/open-mmlab/mmsegmentation/issues/1415
                     # for more ditails
                     label_map=dict(),
-                    reduce_zero_label=self.reduce_zero_label))
+                    reduce_zero_label=False))
 
         return pre_eval_results
 
@@ -445,7 +445,7 @@ class CustomMatDataset(Dataset):
                 self.ignore_index,
                 metric,
                 label_map=dict(),
-                reduce_zero_label=self.reduce_zero_label)
+                reduce_zero_label=False)
         # test a list of pre_eval_results
         else:
             ret_metrics = pre_eval_to_metrics(results, metric)
