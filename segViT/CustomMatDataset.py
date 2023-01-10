@@ -86,7 +86,7 @@ class CustomMatDataset(Dataset):
                  split=None,
                  data_root=None,
                  test_mode=False,
-                 ignore_index=255,
+                 ignore_index=255, # this changed to 0 from 255
                  reduce_zero_label=False,
                  classes=None,
                  palette=None,
@@ -314,6 +314,7 @@ class CustomMatDataset(Dataset):
         pre_eval_results = []
 
         for pred, index in zip(preds, indices):
+            print(f"what is pred and index pred: {pred}, index {index}")
             seg_map = self.get_gt_seg_map_by_idx(index)
             pre_eval_results.append(
                 intersect_and_union(
@@ -328,7 +329,8 @@ class CustomMatDataset(Dataset):
                     # for more ditails
                     label_map=dict(),
                     reduce_zero_label=False))
-
+        # check here
+        print(f"pre_eval_results {pre_eval_results}")
         return pre_eval_results
 
     def get_classes_and_palette(self, classes=None, palette=None):
@@ -438,6 +440,7 @@ class CustomMatDataset(Dataset):
             if gt_seg_maps is None:
                 gt_seg_maps = self.get_gt_seg_maps()
             num_classes = len(self.CLASSES)
+            print(f"number of classes {num_classes}")
             ret_metrics = eval_metrics(
                 results,
                 gt_seg_maps,
@@ -448,6 +451,7 @@ class CustomMatDataset(Dataset):
                 reduce_zero_label=False)
         # test a list of pre_eval_results
         else:
+            print(f"results is {results}")
             ret_metrics = pre_eval_to_metrics(results, metric)
 
         # Because dataset.CLASSES is required for per-eval.

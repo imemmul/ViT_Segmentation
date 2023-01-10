@@ -115,15 +115,15 @@ from mmseg.datasets.custom import CustomDataset
 class EddyDatasetREGISTER(CustomMatDataset):
     """Eddy dataset.
     """
-    CLASSES = ('eddy', 'not-eddy')
+    CLASSES = ('eddy',)
 
-    PALETTE = [[120, 120, 120], [180, 120, 120]]
+    PALETTE = [[0]]
 
     def __init__(self, **kwargs):
         super(EddyDatasetREGISTER, self).__init__(
-            img_suffix='.png',
+            img_suffix='.mat',
             seg_map_suffix='.png',
-            reduce_zero_label=True,
+            reduce_zero_label=False,
             **kwargs)
 
     def results2img(self, results, imgfile_prefix, to_label_id, indices=None):
@@ -165,7 +165,7 @@ class EddyDatasetREGISTER(CustomMatDataset):
             output = Image.fromarray(result.astype(np.uint8))
             output.save(png_filename)
             result_files.append(png_filename)
-        print(f"result files {result_files}")
+        # print(f"result files {result_files}")
         return result_files
 
     def format_results(self,
@@ -299,7 +299,8 @@ def convert_rgb_to_gray(ori_dir):
     for dir in dirs:
         img = Image.open(ori_dir+dir).convert('L')
         print(f"Converting {dir} to Grayscale")
-        img.save(ori_dir+dir)
+        print(img.shape)
+        # img.save(ori_dir+dir)
         print(f"Saved {dir} to {ori_dir+dir}")
         
 
@@ -323,35 +324,19 @@ def load_mat_img(dir):
 
 
 if __name__ == "__main__":
-    dataset_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/data/"
-    train_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_data_mat/"
-    valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_mat/"
-    label_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/label/"
-    train_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_label/"
-    valid_annot_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label/"
-    train_annot_rgb = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/train_annot/"
-    valid_annot_rgb = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/valid_annot/"
-    #convert_mat_to_img(dataset_dir=dataset_dir, train_dir=label_grayscale_dir, valid_dir=valid_dir, split=0.85, label_dir=label_dir, train_annot_dir=train_annot_dir, valid_annot_dir=valid_annot_dir)
+
+    aug_data = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/aug_data/"
+    aug_label = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/aug_label/"
+    train_aug_mat = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_data_aug_mat/"
+    valid_aug_mat = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_aug_mat/"
+    train_label_aug = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_label_aug/"
+    valid_label_aug = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label_aug/"
     split = 0.85
-    # split_mat_to_split(split=split, train_dir=train_dir, valid_dir=valid_dir, ori_dir=dataset_dir)
-    print(len(os.listdir(valid_annot_dir)))
-    convert_rgb_to_gray(ori_dir=train_annot_rgb)
-    convert_rgb_to_gray(ori_dir=valid_annot_rgb)
-    #convert_rgb_annot2_gray_split(convert_dir=label_dir, split=split, train_converted=train_annot_dir, valid_converted=valid_annot_dir)
-    # variables = staticVariable()
-    # variables_rescale = staticVariable()
-    # max = 0
-    # for dir in os.listdir(train_dir):
-    #     img = load_mat_img(train_dir+dir)
-    #     max_min_values(img, variables)
-    # print(f"Max value in imgs {variables.max}")
-    # print(f"Min value in imgs {variables.min}")
-    # for dir in os.listdir(train_dir):
-    #     img = load_mat_img(train_dir+dir)
-    #     new_img = (img - variables.min) / (variables.max - variables.min)
-    #     max_min_values(new_img, variables_rescale)
-        
-    # print(f"after rescaling max value in imgs {variables_rescale.max}")
-    # print(f"after rescaling min value in imgs {variables_rescale.min}")    
-    # my_list = [-1, -2, 4, 5 ,7]
+    split_mat_to_split(split=split, train_dir=train_aug_mat, valid_dir=valid_aug_mat, ori_dir=aug_data)
+    print(len(os.listdir(train_aug_mat)))
+    print(len(os.listdir(valid_aug_mat)))
+    convert_rgb_annot2_gray_split(convert_dir=aug_label, split=split, train_converted=train_label_aug, valid_converted=valid_label_aug)
+    print(len(os.listdir(train_label_aug)))
+    print(len(os.listdir(valid_label_aug)))
+    
     

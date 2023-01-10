@@ -5,7 +5,7 @@ from mmcv import Config
 import scipy.io as sio
 import os
 import matplotlib.pyplot as plt
-import matplotlib.image as pli
+import matplotlib.image as mpimg
 import warnings
 from mmcv.utils import build_from_cfg
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -82,7 +82,8 @@ def print_TODO():
     +IN segmentors/base.py check forward function takes 1, 3, 640, 640
     +should convert all rgb images to grayscale
     +try to load dataset without converting to png.
-    +change somethings in architecture
+    -change somethings in architecture
+    -maybe we do not have to scale img try with it.
     """
 
 
@@ -192,19 +193,45 @@ def load_model(config, checkpoint, device, CLASSES, PALETTE):
     model.eval()
     return model
 
+def predict_random_img(model, data_dir, label_dir):
+    dirs = os.listdir(data_dir)
+    output_dir = "/home/emir/Desktop/dev/img_output/"
+    rand_indx = np.random.randint(len(dirs))
+    img = data_dir + dirs[rand_indx]
+    label = label_dir + dirs[rand_indx][:-3]+"png"
+    label_img = mpimg.imread(label)
+    print(f"Label Dir {label}")
+    print(f"img dir {img}")
+    result = inference_segmentor(model=model, imgs=img)
+    fig = plt.figure(figsize=(10, 6))
+    rows = 1
+    columns = 2
+    fig.add_subplot(rows, columns, 1)
+    plt.imshow(result[0])
+    plt.title("Pred")
+    fig.add_subplot(rows, columns, 2)
+    plt.title("Label")
+    plt.imshow(label_img)
+    
 
-
+from mmseg.apis.test import single_gpu_test
 if __name__ == "__main__":
     seg_Vit_L_cfg = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/SegViT_L_EddyData.py"
+    cp = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/latest.pth"
+    valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_mat/"
+    valid_label = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label/"
+    out_dir = "/home/emir/Desktop/dev/img_output/"
     cfg = Config.fromfile(seg_Vit_L_cfg)
-    cfg = set_batch_size(cfg, 1) # batch size of 8
-    # classes = EddyDatasetREGISTER.CLASSES
-    # palette = EddyDatasetREGISTER.PALETTE
-    # model = load_model(config=cfg, checkpoint=cp, device=device, CLASSES=classes, PALETTE=palette) # checkpoint loaded.
+    cfg = set_batch_size(cfg, 1) # batch size of 1
     model = init_segmentor(cfg, device=device)
-    # print(model.decode_head.class_embed)
-    # model.decode_head.class_embed.out_features = 2
-    # print(model.decode_head.class_embed.out_features)
-    print(model)
+    # model.CLASSES = EddyDatasetREGISTER.CLASSES
+    # model.PALETTE = EddyDatasetREGISTER.PALETTE
+    # predict_random_img(model=model, data_dir=valid_dir, label_dir=valid_label)
+    # datasets = build_dataset(cfg.data.test)
+    # data_loader = build_dataloader(dataset=datasets, samples_per_gpu=1, workers_per_gpu=2)
+    # eval = single_gpu_test(model=model, data_loader=data_loader,show=True, out_dir=out_dir)
+
+    # print(eval)
+    # print(model)
     datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
     train_segmentor(model, cfg=cfg, dataset=datasets, validate=True)

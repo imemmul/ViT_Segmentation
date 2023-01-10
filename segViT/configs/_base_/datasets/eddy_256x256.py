@@ -1,6 +1,10 @@
 # dataset settings
 dataset_type = 'EddyDatasetREGISTER'
 data_root = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/'
+train_dir = "train_data_aug_mat/"
+train_annot= "train_label_aug/"
+valid_dir = "valid_data_aug_mat/"
+valid_annot = "valid_label_aug/"
 # data_root = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -19,7 +23,7 @@ train_pipeline = [
     dict(type='Collect', keys=['img', 'gt_semantic_seg']),
 ]
 test_pipeline = [
-    #dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
         img_scale=(2048, 256),
@@ -39,18 +43,18 @@ data = dict(
     train=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='train_data_mat/',
-        ann_dir='train_label/',
+        img_dir=train_dir,
+        ann_dir=train_annot,
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='valid_data_mat/',
-        ann_dir='valid_label/',
+        img_dir=valid_dir,
+        ann_dir=valid_annot,
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='valid_data_mat/',
-        ann_dir='valid_label/',
+        img_dir=valid_dir,
+        ann_dir=valid_annot,
         pipeline=test_pipeline))
