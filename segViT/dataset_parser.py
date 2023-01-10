@@ -17,6 +17,8 @@ from PIL import Image
 from mmseg.datasets.builder import DATASETS
 from mmseg.datasets.custom import CustomDataset
 
+
+
 NUM_WORKERS = os.cpu_count()
 
 def create_dataloaders(
@@ -117,7 +119,7 @@ class EddyDatasetREGISTER(CustomMatDataset):
     """
     CLASSES = ('eddy',)
 
-    PALETTE = [[0]]
+    PALETTE = [[0,0,0]]
 
     def __init__(self, **kwargs):
         super(EddyDatasetREGISTER, self).__init__(
@@ -200,7 +202,7 @@ class EddyDatasetREGISTER(CustomMatDataset):
 
         result_files = self.results2img(results, imgfile_prefix, to_label_id,
                                         indices)
-        print(f"result files {result_files}")
+        # print(f"result files {result_files}")
         return result_files
 
 
@@ -299,10 +301,27 @@ def convert_rgb_to_gray(ori_dir):
     for dir in dirs:
         img = Image.open(ori_dir+dir).convert('L')
         print(f"Converting {dir} to Grayscale")
-        print(img.shape)
-        # img.save(ori_dir+dir)
+        # print(img.shape)
+        img.save(ori_dir+dir)
         print(f"Saved {dir} to {ori_dir+dir}")
         
+import torch
+def revert_gray_scale(ori_dir, save_dir):
+    dirs = os.listdir(ori_dir)
+    for dir in dirs:
+        img = mpimg.imread(ori_dir+dir)
+        img = torch.tensor(img)
+        gt_cls = img.unique()
+        gt_cls = gt_cls[gt_cls != 255]
+        masks = []
+        for cls in gt_cls:
+            masks.append(img == cls)
+        if len(gt_cls) == 0:
+            masks.append(img == 255)
+
+        masks = torch.stack(masks, dim=0)
+        mpimg.imsave(save_dir+dir, masks[0], cmap='gray')
+
 
 
 class staticVariable():
@@ -331,12 +350,18 @@ if __name__ == "__main__":
     valid_aug_mat = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_aug_mat/"
     train_label_aug = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_label_aug/"
     valid_label_aug = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label_aug/"
+    reverted_train = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_annot_aug_reverted/"
+    reverted_valid = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_annot_aug_reverted/"
     split = 0.85
-    split_mat_to_split(split=split, train_dir=train_aug_mat, valid_dir=valid_aug_mat, ori_dir=aug_data)
-    print(len(os.listdir(train_aug_mat)))
-    print(len(os.listdir(valid_aug_mat)))
-    convert_rgb_annot2_gray_split(convert_dir=aug_label, split=split, train_converted=train_label_aug, valid_converted=valid_label_aug)
-    print(len(os.listdir(train_label_aug)))
-    print(len(os.listdir(valid_label_aug)))
+    # split_mat_to_split(split=split, train_dir=train_aug_mat, valid_dir=valid_aug_mat, ori_dir=aug_data)
+    # print(len(os.listdir(train_aug_mat)))
+    # print(len(os.listdir(valid_aug_mat)))
+    # convert_rgb_annot2_gray_split(convert_dir=aug_label, split=split, train_converted=train_label_aug, valid_converted=valid_label_aug)
+    # print(len(os.listdir(train_label_aug)))
+    # print(len(os.listdir(valid_label_aug)))
+    # revert_gray_scale(ori_dir=train_label_aug, save_dir=reverted_train)
+    # revert_gray_scale(ori_dir=valid_label_aug, save_dir=reverted_valid)
+    convert_rgb_to_gray(ori_dir=reverted_train)
+    convert_rgb_to_gray(ori_dir=reverted_valid)
     
     

@@ -37,7 +37,7 @@ model = dict(
         loss_decode=dict(
             type='ATMLoss', num_classes=1, dec_layers=len(out_indices), loss_weight=1.0),
     ),
-    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341)),
+    test_cfg=dict(mode='whole', crop_size=(512, 512), stride=(341, 341)),
 )
 
 find_unused_parameters=True

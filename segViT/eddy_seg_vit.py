@@ -203,35 +203,35 @@ def predict_random_img(model, data_dir, label_dir):
     print(f"Label Dir {label}")
     print(f"img dir {img}")
     result = inference_segmentor(model=model, imgs=img)
-    fig = plt.figure(figsize=(10, 6))
-    rows = 1
-    columns = 2
-    fig.add_subplot(rows, columns, 1)
-    plt.imshow(result[0])
-    plt.title("Pred")
-    fig.add_subplot(rows, columns, 2)
-    plt.title("Label")
-    plt.imshow(label_img)
+    # fig = plt.figure(figsize=(10, 6))
+    # rows = 1
+    # columns = 2
+    # fig.add_subplot(rows, columns, 1)
+    # plt.imshow(result[0].squeeze())
+    # plt.title("Pred")
+    # fig.add_subplot(rows, columns, 2)
+    # plt.title("Label")
+    # plt.imshow(label_img)
     
 
 from mmseg.apis.test import single_gpu_test
 if __name__ == "__main__":
     seg_Vit_L_cfg = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/SegViT_L_EddyData.py"
-    cp = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/latest.pth"
+    cp = "/home/emir/Desktop/dev/myResearch/src/checkpoints/latest.pth"
+    cp_20 = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/iter_20000.pth"
     valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_mat/"
     valid_label = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label/"
     out_dir = "/home/emir/Desktop/dev/img_output/"
     cfg = Config.fromfile(seg_Vit_L_cfg)
     cfg = set_batch_size(cfg, 1) # batch size of 1
     model = init_segmentor(cfg, device=device)
-    # model.CLASSES = EddyDatasetREGISTER.CLASSES
-    # model.PALETTE = EddyDatasetREGISTER.PALETTE
+    model.CLASSES = EddyDatasetREGISTER.CLASSES
+    model.PALETTE = EddyDatasetREGISTER.PALETTE
     # predict_random_img(model=model, data_dir=valid_dir, label_dir=valid_label)
     # datasets = build_dataset(cfg.data.test)
     # data_loader = build_dataloader(dataset=datasets, samples_per_gpu=1, workers_per_gpu=2)
     # eval = single_gpu_test(model=model, data_loader=data_loader,show=True, out_dir=out_dir)
-
     # print(eval)
     # print(model)
     datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
-    train_segmentor(model, cfg=cfg, dataset=datasets, validate=True)
+    train_segmentor(model, cfg=cfg, dataset=datasets, validate=False)

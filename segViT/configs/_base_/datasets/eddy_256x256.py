@@ -2,9 +2,9 @@
 dataset_type = 'EddyDatasetREGISTER'
 data_root = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/'
 train_dir = "train_data_aug_mat/"
-train_annot= "train_label_aug/"
+train_annot= "train_label_aug"
 valid_dir = "valid_data_aug_mat/"
-valid_annot = "valid_label_aug/"
+valid_annot = "valid_label_aug"
 # data_root = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)

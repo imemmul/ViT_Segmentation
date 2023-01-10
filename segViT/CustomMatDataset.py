@@ -86,7 +86,7 @@ class CustomMatDataset(Dataset):
                  split=None,
                  data_root=None,
                  test_mode=False,
-                 ignore_index=255, # this changed to 0 from 255
+                 ignore_index=0, # this changed to 0 from 255
                  reduce_zero_label=False,
                  classes=None,
                  palette=None,
@@ -158,8 +158,8 @@ class CustomMatDataset(Dataset):
         Returns:
             list[dict]: All image info of dataset.
         """
-        print(f"Annot dir {ann_dir}")
-        print(f"img dir {img_dir}")
+        # print(f"Annot dir {ann_dir}")
+        # print(f"img dir {img_dir}")
         img_infos = []
         if split is not None:
             lines = mmcv.list_from_file(
@@ -314,7 +314,7 @@ class CustomMatDataset(Dataset):
         pre_eval_results = []
 
         for pred, index in zip(preds, indices):
-            print(f"what is pred and index pred: {pred}, index {index}")
+            # print(f"what is pred and index pred: {pred}, index {index}")
             seg_map = self.get_gt_seg_map_by_idx(index)
             pre_eval_results.append(
                 intersect_and_union(
@@ -330,7 +330,7 @@ class CustomMatDataset(Dataset):
                     label_map=dict(),
                     reduce_zero_label=False))
         # check here
-        print(f"pre_eval_results {pre_eval_results}")
+        # print(f"pre_eval_results {pre_eval_results}")
         return pre_eval_results
 
     def get_classes_and_palette(self, classes=None, palette=None):
