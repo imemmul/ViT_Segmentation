@@ -192,7 +192,7 @@ def load_model(config, checkpoint, device, CLASSES, PALETTE):
     model.to(device)
     model.eval()
     return model
-
+from mmseg.core.evaluation import intersect_and_union, eval_metrics, mean_iou
 def predict_random_img(model, data_dir, label_dir):
     dirs = os.listdir(data_dir)
     output_dir = "/home/emir/Desktop/dev/img_output/"
@@ -203,22 +203,38 @@ def predict_random_img(model, data_dir, label_dir):
     print(f"Label Dir {label}")
     print(f"img dir {img}")
     result = inference_segmentor(model=model, imgs=img)
-    # fig = plt.figure(figsize=(10, 6))
-    # rows = 1
-    # columns = 2
-    # fig.add_subplot(rows, columns, 1)
-    # plt.imshow(result[0].squeeze())
-    # plt.title("Pred")
-    # fig.add_subplot(rows, columns, 2)
-    # plt.title("Label")
-    # plt.imshow(label_img)
+    fig = plt.figure(figsize=(10, 6))
+    rows = 1
+    columns = 2
+    # print(f"IoU score of pred is {calculate_iou(model)}")
+    fig.add_subplot(rows, columns, 1)
+    plt.imshow(result[0].squeeze())
+    plt.title("Pred")
+    fig.add_subplot(rows, columns, 2)
+    plt.title("Label")
+    plt.imshow(label_img)
+
+
+def calculate_iou(model, dir, label_dir):
+    # results = []
+    imgs = []
+    labels = []
+    imgs_wo_dir = sorted(os.listdir(dir))[0:100] # take half of the example
+    print(f"len of imgs_wo_dir {len(imgs_wo_dir)}")
+    # label_dir = sorted(os.listdir(label_dir))
+    for d in imgs_wo_dir:
+        imgs.append(dir + d)
+        labels.append(label_dir + d[:-3]+"png")
+    results = inference_segmentor(model=model, imgs=imgs)
+    metric_result = mean_iou(results=results, gt_seg_maps=labels, num_classes=1, ignore_index=255)
+    print(f"Metrics result are (mIoU) {metric_result}")
     
 
 from mmseg.apis.test import single_gpu_test
 if __name__ == "__main__":
     seg_Vit_L_cfg = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/SegViT_L_EddyData.py"
-    cp = "/home/emir/Desktop/dev/myResearch/src/checkpoints/latest.pth"
-    cp_20 = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/iter_20000.pth"
+    cp = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/iter_160000.pth"
+    # cp_20 = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/iter_20000.pth"
     valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_mat/"
     valid_label = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label/"
     out_dir = "/home/emir/Desktop/dev/img_output/"
@@ -233,5 +249,6 @@ if __name__ == "__main__":
     # eval = single_gpu_test(model=model, data_loader=data_loader,show=True, out_dir=out_dir)
     # print(eval)
     # print(model)
+    # calculate_iou(model=model, dir=valid_dir, label_dir=valid_label)
     datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
     train_segmentor(model, cfg=cfg, dataset=datasets, validate=False)

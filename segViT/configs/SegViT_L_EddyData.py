@@ -30,8 +30,8 @@ model = dict(
         num_heads=16,
         use_stages=len(out_indices),
         loss_decode=dict(
-            type='ATMLoss', num_classes=1, dec_layers=len(out_indices), loss_weight=1.0),
-        threshold=0.7
+            type='CrossEntropyLoss', use_sigmoid=True), # use cross entropy loss instead atm loss
+        threshold=0.6
     ),
     test_cfg=dict(mode='whole', crop_size=(256, 256), stride=(208, 208)),
 )
@@ -77,18 +77,18 @@ data = dict(
     val=dict(pipeline=test_pipeline),
     test=dict(pipeline=test_pipeline))
 
-optimizer = dict(_delete_=True, type='AdamW', lr=0.003, betas=(0.9, 0.999), weight_decay=0.01,
+optimizer = dict(type='Adam', lr=0.03, betas=(0.9, 0.999), weight_decay=0.01,
                  paramwise_cfg=dict(custom_keys={'norm': dict(decay_mult=0.),
                                                  'ln': dict(decay_mult=0.),
                                                  'head': dict(lr_mult=10.),
                                                  }))
-#making learning rate 0.00002 to 0.003
+#making learning rate 0.00002 to 0.03
 optimizer_config = dict(
-    _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
+    grad_clip=dict(max_norm=35, norm_type=2))
 
-lr_config = dict(_delete_=True, policy='poly',
+lr_config = dict(policy='poly',
                  warmup='linear',
-                 warmup_iters=500, # changed warmup iters from 1500 to 500
+                 warmup_iters=1500, # changed warmup iters from 1500 to 500
                  warmup_ratio=1e-6,
                  power=1.0, min_lr=0.0, by_epoch=False)
 # model = dict(
