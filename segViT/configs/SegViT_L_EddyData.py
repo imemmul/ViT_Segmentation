@@ -30,8 +30,8 @@ model = dict(
         num_heads=16,
         use_stages=len(out_indices),
         loss_decode=dict(
-            type='CrossEntropyLoss', use_sigmoid=True), # use cross entropy loss instead atm loss
-        threshold=0.6
+            type='ATMLoss', use_sigmoid=True), # use cross entropy loss instead atm loss
+        threshold=0.5
     ),
     test_cfg=dict(mode='whole', crop_size=(256, 256), stride=(208, 208)),
 )
