@@ -199,7 +199,6 @@ class VisionTransformer(BaseModule):
                  pretrained=None,
                  init_cfg=None):
         super(VisionTransformer, self).__init__(init_cfg=init_cfg)
-
         if isinstance(img_size, int):
             img_size = to_2tuple(img_size)
         elif isinstance(img_size, tuple):
@@ -398,6 +397,9 @@ class VisionTransformer(BaseModule):
         return pos_embed
 
     def forward(self, inputs):
+        save_dir = "/home/emir/Desktop/dev/model_outputs/"
+        print("i am insid vit")
+        mpimg.imsave(save_dir+"input_of_vision_transformer.png", inputs)
         B = inputs.shape[0]
 
         x, hw_shape = self.patch_embed(inputs)
@@ -429,7 +431,7 @@ class VisionTransformer(BaseModule):
                 if self.output_cls_token:
                     out = [out, x[:, 0]]
                 outs.append(out)
-
+        mpimg.imsave(save_dir+"output_of_vit.png", outs)
         return tuple(outs)
 
     def train(self, mode=True):
@@ -438,3 +440,4 @@ class VisionTransformer(BaseModule):
             for m in self.modules():
                 if isinstance(m, nn.LayerNorm):
                     m.eval()
+import matplotlib.image as mpimg

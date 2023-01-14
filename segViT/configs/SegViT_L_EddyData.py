@@ -9,12 +9,12 @@ img_size = 256
 gpu_ids = range(1)
 seed = 42
 #checkpoint = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
+checkpoint = ""
 device = 'cuda'
 #work_dir = "/home/emir/dev/segmentation_eddies/ViT_Segmentation/segViT/output/"
 work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output"
 out_indices = [7, 15, 23]
 model = dict(
-    #pretrained=checkpoint,
     backbone=dict(
         img_size=(256, 256),
         embed_dims=1024,
@@ -30,10 +30,10 @@ model = dict(
         num_heads=16,
         use_stages=len(out_indices),
         loss_decode=dict(
-            type='ATMLoss', use_sigmoid=True), # use cross entropy loss instead atm loss
-        threshold=0.5
+            type='ATMLoss', num_classes=1, dec_layers=len(out_indices), loss_weight=1.0), # use cross entropy loss instead atm loss use ATMLoss
+        threshold=0.6
     ),
-    test_cfg=dict(mode='whole', crop_size=(256, 256), stride=(208, 208)),
+    test_cfg=dict(mode='whole', crop_size=(256, 256), stride=(208, 208)), # dont forget to update stride in seg_vit_b16.py
 )
 
 # jax use different img norm cfg
@@ -47,8 +47,8 @@ train_pipeline = [
     # dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     # dict(type='RandomFlip', prob=0.5),
     # dict(type='PhotoMetricDistortion'),
-    # dict(type='Normalize', **img_norm_cfg),
-    # dict(type='Pad', size=crop_size, pad_val=0, seg_pad_val=255),
+    dict(type='Normalize', **img_norm_cfg), # to-do
+    dict(type='Pad', size=crop_size, pad_val=0, seg_pad_val=255), # to-do
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_semantic_seg'])
 ]
@@ -77,18 +77,17 @@ data = dict(
     val=dict(pipeline=test_pipeline),
     test=dict(pipeline=test_pipeline))
 
-optimizer = dict(type='Adam', lr=0.03, betas=(0.9, 0.999), weight_decay=0.01,
+optimizer = dict(type='AdamW', lr=0.00002, betas=(0.9, 0.999), weight_decay=0.01,
                  paramwise_cfg=dict(custom_keys={'norm': dict(decay_mult=0.),
                                                  'ln': dict(decay_mult=0.),
                                                  'head': dict(lr_mult=10.),
                                                  }))
-#making learning rate 0.00002 to 0.03
-optimizer_config = dict(
-    grad_clip=dict(max_norm=35, norm_type=2))
+#
+optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 
-lr_config = dict(policy='poly',
+lr_config = dict(_delete_=True, policy='poly',
                  warmup='linear',
-                 warmup_iters=1500, # changed warmup iters from 1500 to 500
+                 warmup_iters=1500,
                  warmup_ratio=1e-6,
                  power=1.0, min_lr=0.0, by_epoch=False)
 # model = dict(

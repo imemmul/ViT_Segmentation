@@ -233,14 +233,15 @@ def calculate_iou(model, dir, label_dir):
 from mmseg.apis.test import single_gpu_test
 if __name__ == "__main__":
     seg_Vit_L_cfg = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/SegViT_L_EddyData.py"
-    cp = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/iter_160000.pth"
+    cp = "/home/emir/Desktop/dev/myResearch/checkpoints/iter_150000.pth"
     # cp_20 = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/iter_20000.pth"
     valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_mat/"
     valid_label = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label/"
     out_dir = "/home/emir/Desktop/dev/img_output/"
     cfg = Config.fromfile(seg_Vit_L_cfg)
     cfg = set_batch_size(cfg, 1) # batch size of 1
-    model = init_segmentor(cfg, device=device)
+    model = init_segmentor(cfg, device=device, checkpoint=cp)
+    # model = build_segmentor(cfg=cfg.model)
     model.CLASSES = EddyDatasetREGISTER.CLASSES
     model.PALETTE = EddyDatasetREGISTER.PALETTE
     # predict_random_img(model=model, data_dir=valid_dir, label_dir=valid_label)
@@ -251,4 +252,5 @@ if __name__ == "__main__":
     # print(model)
     # calculate_iou(model=model, dir=valid_dir, label_dir=valid_label)
     datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
+    # print(model)
     train_segmentor(model, cfg=cfg, dataset=datasets, validate=False)

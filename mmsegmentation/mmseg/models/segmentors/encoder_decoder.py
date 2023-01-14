@@ -137,7 +137,7 @@ class EncoderDecoder(BaseSegmentor):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
-
+        print(f"type of extract_feat {type(self.extract_feat)}")
         x = self.extract_feat(img)
 
         losses = dict()

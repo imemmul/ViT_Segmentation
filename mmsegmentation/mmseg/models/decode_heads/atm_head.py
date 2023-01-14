@@ -7,12 +7,11 @@ from typing import Optional
 import math
 from functools import partial
 from mmcv.runner import auto_fp16, force_fp32
-import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 from mmseg.models.builder import HEADS
 from mmseg.models.decode_heads.decode_head import BaseDecodeHead
 from timm.models.layers import trunc_normal_
-import matplotlib.pyplot as plt
 from mmseg.models.losses import accuracy
 
 def trunc_normal_init(module: nn.Module,
@@ -196,6 +195,9 @@ class ATMHead(BaseDecodeHead):
                 constant_init(m, val=1.0, bias=0.0)
 
     def forward(self, inputs):
+        # save_dir = "/home/emir/Desktop/dev/model_outputs/"
+        # mpimg.imsave(save_dir+"input_of_ATM_head.png", inputs)
+        # print("saving image in atm head")
         x = []
         for stage_ in inputs[:self.use_stages]:
             x.append(self.d4_to_d3(stage_) if stage_.dim() > 3 else stage_)
