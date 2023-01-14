@@ -240,7 +240,7 @@ if __name__ == "__main__":
     out_dir = "/home/emir/Desktop/dev/img_output/"
     cfg = Config.fromfile(seg_Vit_L_cfg)
     cfg = set_batch_size(cfg, 1) # batch size of 1
-    model = init_segmentor(cfg, device=device, checkpoint=cp)
+    model = init_segmentor(cfg, device=device)
     # model = build_segmentor(cfg=cfg.model)
     model.CLASSES = EddyDatasetREGISTER.CLASSES
     model.PALETTE = EddyDatasetREGISTER.PALETTE

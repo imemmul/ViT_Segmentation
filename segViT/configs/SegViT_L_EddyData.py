@@ -77,7 +77,7 @@ data = dict(
     val=dict(pipeline=test_pipeline),
     test=dict(pipeline=test_pipeline))
 
-optimizer = dict(type='AdamW', lr=0.00002, betas=(0.9, 0.999), weight_decay=0.01,
+optimizer = dict(type='AdamW', lr=0.00003, betas=(0.9, 0.999), weight_decay=0.01,
                  paramwise_cfg=dict(custom_keys={'norm': dict(decay_mult=0.),
                                                  'ln': dict(decay_mult=0.),
                                                  'head': dict(lr_mult=10.),
@@ -85,11 +85,11 @@ optimizer = dict(type='AdamW', lr=0.00002, betas=(0.9, 0.999), weight_decay=0.01
 #
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 
-lr_config = dict(_delete_=True, policy='poly',
+lr_config = dict(policy='poly',
                  warmup='linear',
                  warmup_iters=1500,
                  warmup_ratio=1e-6,
-                 power=1.0, min_lr=0.0, by_epoch=False)
+                 power=1.0, min_lr=1e-5, by_epoch=False)
 # model = dict(
 #     pretrained=checkpoint,
 #     backbone=dict(
