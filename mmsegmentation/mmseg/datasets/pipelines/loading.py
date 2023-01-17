@@ -58,24 +58,19 @@ class LoadImageFromFile(object):
                                 results['img_info']['filename'])
         else:
             filename = results['img_info']['filename']
-        # img_bytes = self.file_client.get(filename)
-        # img = mmcv.imfrombytes(
-        #     img_bytes, flag=self.color_type, backend=self.imdecode_backend)
-        # if self.to_float32:
-        #print(f"filename {filename}")
         if filename[-3:] == 'mat':
-            mat = sio.loadmat(filename)
-            matX = mat["vxSample"]
-            matY = mat["vySample"]
-            img = np.stack((matX, matY, np.zeros(matX.shape)), -1)
-            img = (img - img.min()) / (img.max() - img.min())
-            img = img.astype(np.float32)
+            img_mat = sio.loadmat(filename)
+            img_x = img_mat["vxSample"]
+            img_y = img_mat["vySample"]
+            img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
         else:
             img_bytes = self.file_client.get(filename)
             img = mmcv.imfrombytes(
-                img_bytes, flag=self.color_type, backend=self.imdecode_backend)
+            img_bytes, flag=self.color_type, backend=self.imdecode_backend)
+            
         if self.to_float32:
             img = img.astype(np.float32)
+            
 
         results['filename'] = filename
         results['ori_filename'] = results['img_info']['filename']

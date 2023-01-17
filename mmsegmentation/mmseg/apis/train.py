@@ -98,7 +98,6 @@ def train_segmentor(model,
 
     # The specific dataloader settings
     train_loader_cfg = {**loader_cfg, **cfg.data.get('train_dataloader', {})}
-    print(train_loader_cfg)
     data_loaders = [build_dataloader(ds, **train_loader_cfg) for ds in dataset]
 
     # put model on devices
@@ -123,7 +122,6 @@ def train_segmentor(model,
 
     if cfg.get('runner') is None:
         cfg.runner = {'type': 'IterBasedRunner', 'max_iters': cfg.total_iters}
-        print(cfg.total_iters)
         warnings.warn(
             'config is now expected to have a `runner` section, '
             'please set `runner` in your config.', UserWarning)
@@ -193,5 +191,4 @@ def train_segmentor(model,
         runner.resume(cfg.resume_from)
     elif cfg.load_from:
         runner.load_checkpoint(cfg.load_from)
-    # print(len(data_loaders))
     runner.run(data_loaders, cfg.workflow)

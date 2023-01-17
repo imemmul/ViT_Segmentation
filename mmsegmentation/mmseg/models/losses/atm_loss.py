@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 from mmseg.models.builder import LOSSES
 from .criterion import SetCriterion
-
+# from .criterion_point import SetCriterion_point
 @LOSSES.register_module()
 class ATMLoss(nn.Module):
     """ATMLoss.

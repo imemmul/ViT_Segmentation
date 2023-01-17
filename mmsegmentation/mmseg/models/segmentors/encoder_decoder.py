@@ -8,7 +8,7 @@ from mmseg.ops import resize
 from .. import builder
 from ..builder import SEGMENTORS
 from .base import BaseSegmentor
-import matplotlib.image as mpimg
+
 
 @SEGMENTORS.register_module()
 class EncoderDecoder(BaseSegmentor):
@@ -36,7 +36,6 @@ class EncoderDecoder(BaseSegmentor):
         self.backbone = builder.build_backbone(backbone)
         if neck is not None:
             self.neck = builder.build_neck(neck)
-        #print(decode_head) decode head is dict type
         self._init_decode_head(decode_head)
         self._init_auxiliary_head(auxiliary_head)
 
@@ -137,7 +136,7 @@ class EncoderDecoder(BaseSegmentor):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
-        print(f"type of extract_feat {type(self.extract_feat)}")
+
         x = self.extract_feat(img)
 
         losses = dict()
@@ -265,8 +264,6 @@ class EncoderDecoder(BaseSegmentor):
     def simple_test(self, img, img_meta, rescale=True):
         """Simple test with single image."""
         seg_logit = self.inference(img, img_meta, rescale)
-        save_dir = "/home/emir/Desktop/dev/img_output/seg_logit_inference.png"
-        mpimg.imsave(save_dir, seg_logit)
         if self.out_channels == 1:
             seg_pred = (seg_logit >
                         self.decode_head.threshold).to(seg_logit).squeeze(1)

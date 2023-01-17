@@ -7,8 +7,9 @@ import torch.nn.functional as F
 
 from ..builder import LOSSES
 from .utils import get_class_weight, weight_reduce_loss
-
-
+from torchvision.utils import save_image
+import matplotlib.image as mpimg
+save_dir = "/home/emir/Desktop/dev/model_outputs/"
 def cross_entropy(pred,
                   label,
                   weight=None,
@@ -115,6 +116,15 @@ def binary_cross_entropy(pred,
     Returns:
         torch.Tensor: The calculated loss
     """
+    # print(f"pred dict is {pred}")
+    # pred_shape = pred["pred"].shape
+    # print(f"ignore index inside binary cross entropy {ignore_index}")
+    # save_image(label, save_dir+"label_tensor_bce.png")
+    # print(f"label shape is {label.shape}")
+    # print(f"label combined with ignore index = {label}")
+    # print(f"pred shape is {pred_shape}")
+    
+    pred = pred["pred"]
     if pred.size(1) == 1:
         # For binary class segmentation, the shape of pred is
         # [N, 1, H, W] and that of label is [N, H, W].

@@ -3,11 +3,10 @@ _base_ = [
     '../_base_/datasets/ade20k_640x640.py', '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_160k.py'
 ]
-#checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'  # noqa
-checkpoint = "/home/emir/Desktop/dev/myResearch/seg_model/cp_vit_l_16/vit_large_p16_384_20220308-d4efb41d.pth"
+checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_large_p16_384_20220308-d4efb41d.pth'  # noqa
 
 model = dict(
-    #pretrained=checkpoint,
+    pretrained=checkpoint,
     backbone=dict(
         type='VisionTransformer',
         img_size=(640, 640),

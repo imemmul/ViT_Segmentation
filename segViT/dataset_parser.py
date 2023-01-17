@@ -119,7 +119,7 @@ class EddyDatasetREGISTER(CustomMatDataset):
     """
     CLASSES = ('eddy',)
 
-    PALETTE = [[0,0,0]]
+    PALETTE = [[255,255,255]]
 
     def __init__(self, **kwargs):
         super(EddyDatasetREGISTER, self).__init__(
@@ -354,14 +354,14 @@ if __name__ == "__main__":
     reverted_valid = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_annot_aug_reverted/"
     split = 0.85
     # split_mat_to_split(split=split, train_dir=train_aug_mat, valid_dir=valid_aug_mat, ori_dir=aug_data)
-    # print(len(os.listdir(train_aug_mat)))
-    # print(len(os.listdir(valid_aug_mat)))
+    print(len(os.listdir(train_aug_mat)))
+    print(len(os.listdir(valid_aug_mat)))
     # convert_rgb_annot2_gray_split(convert_dir=aug_label, split=split, train_converted=train_label_aug, valid_converted=valid_label_aug)
     # print(len(os.listdir(train_label_aug)))
     # print(len(os.listdir(valid_label_aug)))
     # revert_gray_scale(ori_dir=train_label_aug, save_dir=reverted_train)
     # revert_gray_scale(ori_dir=valid_label_aug, save_dir=reverted_valid)
-    convert_rgb_to_gray(ori_dir=reverted_train)
-    convert_rgb_to_gray(ori_dir=reverted_valid)
+    # convert_rgb_to_gray(ori_dir=reverted_train)
+    # convert_rgb_to_gray(ori_dir=reverted_valid)
     
     

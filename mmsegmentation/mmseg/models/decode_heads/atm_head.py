@@ -7,11 +7,12 @@ from typing import Optional
 import math
 from functools import partial
 from mmcv.runner import auto_fp16, force_fp32
-import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
 
 from mmseg.models.builder import HEADS
 from mmseg.models.decode_heads.decode_head import BaseDecodeHead
 from timm.models.layers import trunc_normal_
+import matplotlib.pyplot as plt
 from mmseg.models.losses import accuracy
 
 def trunc_normal_init(module: nn.Module,
@@ -145,6 +146,7 @@ class ATMHead(BaseDecodeHead):
             shrink_ratio=None,
             **kwargs,
     ):
+        print(f"kwargs from ATMHead {kwargs}")
         super(ATMHead, self).__init__(
             in_channels=in_channels, **kwargs)
 
@@ -195,9 +197,6 @@ class ATMHead(BaseDecodeHead):
                 constant_init(m, val=1.0, bias=0.0)
 
     def forward(self, inputs):
-        # save_dir = "/home/emir/Desktop/dev/model_outputs/"
-        # mpimg.imsave(save_dir+"input_of_ATM_head.png", inputs)
-        # print("saving image in atm head")
         x = []
         for stage_ in inputs[:self.use_stages]:
             x.append(self.d4_to_d3(stage_) if stage_.dim() > 3 else stage_)
@@ -316,6 +315,7 @@ class ATMHead(BaseDecodeHead):
                 seg_logit,
                 seg_label,
                 ignore_index=self.ignore_index)
-
+            seg_logit_pred = seg_logit["pred"].shape
+            print(f"seg_logit pred shape {seg_logit_pred} and seg_label shape {seg_label.shape}")
             loss['acc_seg'] = accuracy(seg_logit["pred"], seg_label, ignore_index=self.ignore_index)
             return loss
