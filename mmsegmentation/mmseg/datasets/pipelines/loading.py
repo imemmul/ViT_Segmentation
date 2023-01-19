@@ -5,7 +5,10 @@ import mmcv
 import numpy as np
 import scipy.io as sio
 from ..builder import PIPELINES
+from torchvision.utils import save_image
+import matplotlib.image as mpimg
 
+save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 @PIPELINES.register_module()
 class LoadImageFromFile(object):
@@ -70,8 +73,8 @@ class LoadImageFromFile(object):
             
         if self.to_float32:
             img = img.astype(np.float32)
-            
-
+        temp_img = (img - img.min()) / (img.max() - img.min())
+        mpimg.imsave(save_dir+"loading_image_from_file.png", temp_img)
         results['filename'] = filename
         results['ori_filename'] = results['img_info']['filename']
         results['img'] = img
@@ -155,6 +158,7 @@ class LoadAnnotations(object):
             gt_semantic_seg[gt_semantic_seg == 0] = 255
             gt_semantic_seg = gt_semantic_seg - 1
             gt_semantic_seg[gt_semantic_seg == 254] = 255
+        mpimg.imsave(save_dir+"loading_annot.png", gt_semantic_seg)
         results['gt_semantic_seg'] = gt_semantic_seg
         results['seg_fields'].append('gt_semantic_seg')
         return results

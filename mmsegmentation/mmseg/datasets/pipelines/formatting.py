@@ -5,9 +5,11 @@ import mmcv
 import numpy as np
 import torch
 from mmcv.parallel import DataContainer as DC
-
+import matplotlib.image as mpimg
+from torchvision.utils import save_image
 from ..builder import PIPELINES
 
+save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 def to_tensor(data):
     """Convert objects of various python types to :obj:`torch.Tensor`.
@@ -197,7 +199,9 @@ class DefaultFormatBundle(object):
             dict: The result dict contains the data that is formatted with
                 default bundle.
         """
-
+        img = results['img']
+        img = (img - img.min()) / (img.max() - img.min())
+        # mpimg.imsave(save_dir+"default_from_bundle.png", img)
         if 'img' in results:
             img = results['img']
             if len(img.shape) < 3:
@@ -282,6 +286,12 @@ class Collect(object):
         data['img_metas'] = DC(img_meta, cpu_only=True)
         for key in self.keys:
             data[key] = results[key]
+        img = data['img'].data
+        # print(f"data dict {data}")
+        temp_img = (img - img.min()) / (img.max() - img.min())
+        save_image(temp_img, save_dir+"collect_out_input.png")
+        seg = data['gt_semantic_seg'].data
+        save_image(seg.float(), save_dir+"collect_out_seg.png")
         return data
 
     def __repr__(self):

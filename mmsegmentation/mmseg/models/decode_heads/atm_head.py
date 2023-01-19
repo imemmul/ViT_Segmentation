@@ -311,11 +311,15 @@ class ATMHead(BaseDecodeHead):
                 empty_label[:, self.crop_idx] = mask_label[:, self.crop_idx]
                 seg_label = empty_label.reshape(bs, h//16, w//16, 16, 16)\
                     .permute(0, 1, 3, 2, 4).reshape(bs, h, w)
+            loss_dict = {}
             loss = self.loss_decode(
                 seg_logit,
                 seg_label,
                 ignore_index=self.ignore_index)
+            loss_dict['loss_ce'] = loss
             seg_logit_pred = seg_logit["pred"].shape
             print(f"seg_logit pred shape {seg_logit_pred} and seg_label shape {seg_label.shape}")
-            loss['acc_seg'] = accuracy(seg_logit["pred"], seg_label, ignore_index=self.ignore_index)
-            return loss
+            print(f"ignore index {self.ignore_index}")
+            # loss_dict['acc_seg'] = accuracy(seg_logit["pred"], seg_label, ignore_index=self.ignore_index) # returns 100.
+            print(f"loss dict {loss_dict}")
+            return loss_dict
