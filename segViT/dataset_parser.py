@@ -117,7 +117,7 @@ from mmseg.datasets.custom import CustomDataset
 class EddyDatasetREGISTER(CustomMatDataset):
     """Eddy dataset.
     """
-    CLASSES = ('eddy',)
+    CLASSES = ('eddy')
 
     PALETTE = [[255,255,255]]
 

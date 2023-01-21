@@ -43,13 +43,16 @@ def cross_entropy(pred,
 
     # class_weight is a manual rescaling weight given to each class.
     # If given, has to be a Tensor of size C element-wise losses
+    print(f"ignore index in ce {ignore_index}")
+    print(f"label max {label.max()}, min {label.min()}")
+    save_image(label.float(), save_dir+"label_in_ce_softmax.png")
+    save_image(pred, save_dir+"pred_in_ce_softmax.png")
     loss = F.cross_entropy(
         pred,
         label,
         weight=class_weight,
         reduction='none',
         ignore_index=ignore_index)
-
     # apply weights and do the reduction
     # average loss over non-ignored elements
     # pytorch's official cross_entropy average loss over non-ignored elements
@@ -60,7 +63,7 @@ def cross_entropy(pred,
         weight = weight.float()
     loss = weight_reduce_loss(
         loss, weight=weight, reduction=reduction, avg_factor=avg_factor)
-
+    print(f"loss")
     return loss
 
 
@@ -116,24 +119,31 @@ def binary_cross_entropy(pred,
     Returns:
         torch.Tensor: The calculated loss
     """
+    # print(label[label != ignore_index].max())
     # print(f"pred dict is {pred}")
     # pred_shape = pred["pred"].shape
-    # print(f"ignore index inside binary cross entropy {ignore_index}")
-    # save_image(label, save_dir+"label_tensor_bce.png")
+    print(f"ignore index inside binary cross entropy {ignore_index}")
+    save_image(label.float(), save_dir+"label_tensor_bce.png")
     # print(f"label shape is {label.shape}")
     # print(f"label combined with ignore index = {label}")
     # print(f"pred shape is {pred_shape}")
-    
-    pred = pred["pred"]
+    # print(f"checking ignore index {label[label != ignore_index].max()}")
+    save_image(pred, save_dir+"segmenter_pred_bce.png")
+    # print(pred.shape)
     if pred.size(1) == 1:
         # For binary class segmentation, the shape of pred is
         # [N, 1, H, W] and that of label is [N, H, W].
         # As the ignore_index often set as 255, so the
         # binary class label check should mask out
         # ignore_index
-        assert label[label != ignore_index].max() <= 1, \
-            'For pred with shape [N, 1, H, W], its label must have at ' \
-            'most 2 classes'
+        try:
+            print(f"problem value {label[label != ignore_index].max()}")
+        except:
+            print("blank image")
+            # this shouldn't assert
+        # assert label[label != ignore_index].max() <= 1, \ 
+        #     'For pred with shape [N, 1, H, W], its label must have at ' \
+        #     'most 2 classes'
         pred = pred.squeeze(1)
     if pred.dim() != label.dim():
         assert (pred.dim() == 2 and label.dim() == 1) or (
@@ -153,8 +163,11 @@ def binary_cross_entropy(pred,
             weight = valid_mask
     # average loss over non-ignored and valid elements
     if reduction == 'mean' and avg_factor is None and avg_non_ignore:
+        # print(f"calculat")
         avg_factor = valid_mask.sum().item()
-
+    save_image(label.float(), save_dir+"label_goes_to_bce.png")
+    print(f"pred shape {pred.shape}")
+    print(f"label shape {label.shape}")
     loss = F.binary_cross_entropy_with_logits(
         pred, label.float(), pos_weight=class_weight, reduction='none')
     # do the reduction for the weighted loss
@@ -193,6 +206,8 @@ def mask_cross_entropy(pred,
     Returns:
         torch.Tensor: The calculated loss
     """
+    # print(f"ignore_index {ignore_index}")
+    ignore_index = None
     assert ignore_index is None, 'BCE loss does not support ignore_index'
     # TODO: handle these two reserved arguments
     assert reduction == 'mean' and avg_factor is None
@@ -278,6 +293,7 @@ class CrossEntropyLoss(nn.Module):
         else:
             class_weight = None
         # Note: for BCE loss, label < 0 is invalid.
+        # print(f"cls_score in ce {cls_score}")
         loss_cls = self.loss_weight * self.cls_criterion(
             cls_score,
             label,

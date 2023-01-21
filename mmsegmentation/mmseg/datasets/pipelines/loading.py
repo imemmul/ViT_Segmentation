@@ -73,8 +73,8 @@ class LoadImageFromFile(object):
             
         if self.to_float32:
             img = img.astype(np.float32)
-        temp_img = (img - img.min()) / (img.max() - img.min())
-        mpimg.imsave(save_dir+"loading_image_from_file.png", temp_img)
+        # temp_img = (img - img.min()) / (img.max() - img.min())
+        # mpimg.imsave(save_dir+"loading_image_from_file.png", temp_img)
         results['filename'] = filename
         results['ori_filename'] = results['img_info']['filename']
         results['img'] = img
@@ -158,8 +158,8 @@ class LoadAnnotations(object):
             gt_semantic_seg[gt_semantic_seg == 0] = 255
             gt_semantic_seg = gt_semantic_seg - 1
             gt_semantic_seg[gt_semantic_seg == 254] = 255
-        mpimg.imsave(save_dir+"loading_annot.png", gt_semantic_seg)
-        results['gt_semantic_seg'] = gt_semantic_seg
+        # mpimg.imsave(save_dir+"loading_annot.png", gt_semantic_seg)
+        results['gt_semantic_seg'] = gt_semantic_seg / 255 # this / 255 rescales the annots to 0 and 1
         results['seg_fields'].append('gt_semantic_seg')
         return results
 

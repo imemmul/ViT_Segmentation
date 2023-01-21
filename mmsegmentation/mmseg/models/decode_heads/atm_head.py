@@ -14,6 +14,9 @@ from mmseg.models.decode_heads.decode_head import BaseDecodeHead
 from timm.models.layers import trunc_normal_
 import matplotlib.pyplot as plt
 from mmseg.models.losses import accuracy
+from torchvision.utils import save_image
+
+save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 def trunc_normal_init(module: nn.Module,
                       mean: float = 0,
@@ -146,7 +149,7 @@ class ATMHead(BaseDecodeHead):
             shrink_ratio=None,
             **kwargs,
     ):
-        print(f"kwargs from ATMHead {kwargs}")
+        # print(f"kwargs from ATMHead {kwargs}")
         super(ATMHead, self).__init__(
             in_channels=in_channels, **kwargs)
 
@@ -202,7 +205,6 @@ class ATMHead(BaseDecodeHead):
             x.append(self.d4_to_d3(stage_) if stage_.dim() > 3 else stage_)
         x.reverse()
         bs = x[0].size()[0]
-
         laterals = []
         attns = []
         maps_size = []
@@ -255,7 +257,6 @@ class ATMHead(BaseDecodeHead):
                                           mode='bilinear', align_corners=False)
 
         out["pred"] = self.semantic_inference(out["pred_logits"], out["pred_masks"])
-
         if self.training:
             # [l, bs, queries, embed]
             outputs_seg_masks = torch.stack(outputs_seg_masks, dim=0)
@@ -264,7 +265,9 @@ class ATMHead(BaseDecodeHead):
             )
         else:
             return out["pred"]
-
+        img = out['pred']
+        print(f"out_pred max valued pixel {img.max()}, min valued {img.min()}")
+        save_image(out["pred"], save_dir+"out_pred_atm.png")
         return out
 
     @torch.jit.unused
@@ -312,14 +315,39 @@ class ATMHead(BaseDecodeHead):
                 seg_label = empty_label.reshape(bs, h//16, w//16, 16, 16)\
                     .permute(0, 1, 3, 2, 4).reshape(bs, h, w)
             loss_dict = {}
+            # new_targets = self.prepare_targets(seg_label)
+            # print(new_targets)
             loss = self.loss_decode(
-                seg_logit,
+                seg_logit['pred'],
                 seg_label,
                 ignore_index=self.ignore_index)
             loss_dict['loss_ce'] = loss
-            seg_logit_pred = seg_logit["pred"].shape
-            print(f"seg_logit pred shape {seg_logit_pred} and seg_label shape {seg_label.shape}")
-            print(f"ignore index {self.ignore_index}")
+            # seg_logit_pred = seg_logit["pred"].shape
+            # print(f"seg_logit pred shape {seg_logit_pred} and seg_label shape {seg_label.shape}")
+            # print(f"ignore index {self.ignore_index}")
             # loss_dict['acc_seg'] = accuracy(seg_logit["pred"], seg_label, ignore_index=self.ignore_index) # returns 100.
             print(f"loss dict {loss_dict}")
             return loss_dict
+    
+    def prepare_targets(self, targets):
+        new_targets = []
+        for targets_per_image in targets:
+            # gt_cls
+            gt_cls = targets_per_image.unique()
+            gt_cls = gt_cls[gt_cls != self.ignore_index]
+            masks = []
+            for cls in gt_cls:
+                masks.append(targets_per_image == cls)
+            if len(gt_cls) == 0:
+                masks.append(targets_per_image == self.ignore_index)
+
+            masks = torch.stack(masks, dim=0)
+            new_targets.append(
+                {
+                    "labels": gt_cls,
+                    "masks": masks,
+                }
+            )
+        return new_targets
+
+import matplotlib.image as mpimg

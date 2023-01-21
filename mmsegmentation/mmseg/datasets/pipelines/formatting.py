@@ -200,7 +200,7 @@ class DefaultFormatBundle(object):
                 default bundle.
         """
         img = results['img']
-        img = (img - img.min()) / (img.max() - img.min())
+        # img = (img - img.min()) / (img.max() - img.min())
         # mpimg.imsave(save_dir+"default_from_bundle.png", img)
         if 'img' in results:
             img = results['img']

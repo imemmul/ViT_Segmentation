@@ -1,10 +1,12 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+#This is a copy of mmsegmentation tool/get_flop.py in order to import needed files correctly.
 import argparse
 
 from mmcv import Config
 from mmcv.cnn import get_model_complexity_info
 
 from mmseg.models import build_segmentor
+import register_models
 
 
 def parse_args():
@@ -22,6 +24,7 @@ def parse_args():
 
 
 def main():
+    register_models.register_modules()
     args = parse_args()
     if len(args.shape) == 1:
         input_shape = (3, args.shape[0], args.shape[0])

@@ -35,7 +35,8 @@ model = dict(
         # use_stages=len(out_indices),
         embed_dims=in_channels // 2,
         loss_decode=dict(
-            type='CrossEntropyLoss', use_sigmoid=True,),
+            type='CrossEntropyLoss', use_sigmoid=True),
+        ignore_index = 255
     ),
     test_cfg=dict(mode='whole', crop_size=(256, 256)),
 )

@@ -4,10 +4,14 @@ import mmcv
 import torch
 from mmcv.parallel import collate, scatter
 from mmcv.runner import load_checkpoint
-
+import numpy as np
+import scipy.io as sio
 from mmseg.datasets.pipelines import Compose
 from mmseg.models import build_segmentor
+import matplotlib.image as mpimg
 
+
+save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 def init_segmentor(config, checkpoint=None, device='cuda:0'):
     """Initialize a segmentor from config file.
@@ -60,7 +64,15 @@ class LoadImage:
         else:
             results['filename'] = None
             results['ori_filename'] = None
-        img = mmcv.imread(results['img'])
+        if results['img'][-3:] == 'mat':
+            img_mat = sio.loadmat(results['img'])
+            img_x = img_mat["vxSample"]
+            img_y = img_mat["vySample"]
+            img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
+        else:
+            img = mmcv.imread(results['img'])
+        temp_img = (img - img.min()) / (img.max() - img.min())
+        mpimg.imsave(save_dir+"input_inferece.png", temp_img)
         results['img'] = img
         results['img_shape'] = img.shape
         results['ori_shape'] = img.shape

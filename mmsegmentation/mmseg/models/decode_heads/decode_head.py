@@ -10,7 +10,9 @@ from mmseg.core import build_pixel_sampler
 from mmseg.ops import resize
 from ..builder import build_loss
 from ..losses import accuracy
+from torchvision.utils import save_image
 
+save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
     """Base class for BaseDecodeHead.
@@ -204,7 +206,6 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             inputs = [inputs[i] for i in self.in_index]
         else:
             inputs = inputs[self.in_index]
-
         return inputs
 
     @auto_fp16()
@@ -261,7 +262,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
     def losses(self, seg_logit, seg_label):
         """Compute segmentation loss."""
         loss = dict()
-        seg_logit = resize(
+        seg_logit = resize( #making 32x32 to 512x512
             input=seg_logit,
             size=seg_label.shape[2:],
             mode='bilinear',
@@ -289,7 +290,10 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
                     seg_label,
                     weight=seg_weight,
                     ignore_index=self.ignore_index)
-
+        print(f"ignore_index decode {self.ignore_index}")
+        save_image(seg_logit, save_dir+"seg_logit_pred.png")
+        # save_image(seg_label.float(), save_dir+"before_acc_label.png")
         loss['acc_seg'] = accuracy(
-            seg_logit, seg_label, ignore_index=self.ignore_index)
+            seg_logit.float(), seg_label.float(), ignore_index=self.ignore_index, topk=0) #topk = 0 should be given
+        print(loss)
         return loss

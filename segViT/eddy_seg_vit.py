@@ -195,7 +195,6 @@ def load_model(config, checkpoint, device, CLASSES, PALETTE):
 from mmseg.core.evaluation import intersect_and_union, eval_metrics, mean_iou
 def predict_random_img(model, data_dir, label_dir):
     dirs = os.listdir(data_dir)
-    output_dir = "/home/emir/Desktop/dev/img_output/"
     rand_indx = np.random.randint(len(dirs))
     img = data_dir + dirs[rand_indx]
     label = label_dir + dirs[rand_indx][:-3]+"png"
@@ -207,12 +206,13 @@ def predict_random_img(model, data_dir, label_dir):
     rows = 1
     columns = 2
     # print(f"IoU score of pred is {calculate_iou(model)}")
+    print(f"results shape {result[0][0].shape}")
     fig.add_subplot(rows, columns, 1)
-    plt.imshow(result[0].squeeze())
+    plt.imshow(result[0][0])
     plt.title("Pred")
     fig.add_subplot(rows, columns, 2)
     plt.title("Label")
-    plt.imshow(label_img)
+    plt.imshow(result[0][1])
 
 
 def calculate_iou(model, dir, label_dir):
