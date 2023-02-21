@@ -22,7 +22,7 @@ model = dict(
         type='SegmenterMaskTransformerHead',
         in_channels=768,
         channels=768,
-        num_classes=1,
+        num_classes=2, # 1 and 2
         num_layers=1,
         out_channels=1,
         num_heads=12,
@@ -30,7 +30,8 @@ model = dict(
         dropout_ratio=0.0,
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0, avg_non_ignore=True),
-        ignore_index = 0
+        ignore_index = 255,
+        threshold=0.3
     ),
     test_cfg=dict(mode='whole', crop_size=(512, 512), stride=(480, 480)),
 )

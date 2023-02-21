@@ -9,7 +9,10 @@ import scipy.io as sio
 from mmseg.datasets.pipelines import Compose
 from mmseg.models import build_segmentor
 import matplotlib.image as mpimg
-
+import sys
+from torchvision.utils import save_image
+# sys.path.insert(, '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/')
+# from dataset_parser import EddyDatasetREGISTER
 
 save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
@@ -38,6 +41,10 @@ def init_segmentor(config, checkpoint=None, device='cuda:0'):
         checkpoint = load_checkpoint(model, checkpoint, map_location='cpu')
         model.CLASSES = checkpoint['meta']['CLASSES']
         model.PALETTE = checkpoint['meta']['PALETTE']
+        # try:    
+        #     model.PALETTE = checkpoint['meta']['PALETTE']
+        # except:
+        #     model.PALETTE = EddyDatasetREGISTER.PALETTE
     model.cfg = config  # save the config in the model for convenience
     model.to(device)
     model.eval()
@@ -108,7 +115,9 @@ def inference_segmentor(model, imgs):
         data = scatter(data, [device])[0]
     else:
         data['img_metas'] = [i.data[0] for i in data['img_metas']]
-
+    img = data['img'][0]
+    img = (img - img.min()) / (img.max() - img.min())
+    save_image(img, save_dir+'inference_segmentor.png')
     # forward the model
     with torch.no_grad():
         result = model(return_loss=False, rescale=True, **data)

@@ -73,8 +73,8 @@ class LoadImageFromFile(object):
             
         if self.to_float32:
             img = img.astype(np.float32)
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"loading_image_from_file.png", temp_img)
+        temp_img = (img - img.min()) / (img.max() - img.min())
+        mpimg.imsave(save_dir+"loading_image_from_file.png", temp_img)
         results['filename'] = filename
         results['ori_filename'] = results['img_info']['filename']
         results['img'] = img
@@ -140,6 +140,7 @@ class LoadAnnotations(object):
                                 results['ann_info']['seg_map'])
         else:
             filename = results['ann_info']['seg_map']
+        print(filename)
         img_bytes = self.file_client.get(filename)
         gt_semantic_seg = mmcv.imfrombytes(
             img_bytes, flag='unchanged',
@@ -153,13 +154,13 @@ class LoadAnnotations(object):
             for old_id, new_id in results['label_map'].items():
                 gt_semantic_seg[gt_semantic_seg_copy == old_id] = new_id
         # reduce zero_label
+        mpimg.imsave(save_dir+"loading_annot.png", gt_semantic_seg)
         if self.reduce_zero_label:
             # avoid using underflow conversion
             gt_semantic_seg[gt_semantic_seg == 0] = 255
             gt_semantic_seg = gt_semantic_seg - 1
             gt_semantic_seg[gt_semantic_seg == 254] = 255
-        # mpimg.imsave(save_dir+"loading_annot.png", gt_semantic_seg)
-        results['gt_semantic_seg'] = gt_semantic_seg / 255 # this / 255 rescales the annots to 0 and 1
+        results['gt_semantic_seg'] = gt_semantic_seg / 255# this / 255 rescales the annots to 0 and 1
         results['seg_fields'].append('gt_semantic_seg')
         return results
 

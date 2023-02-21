@@ -290,8 +290,11 @@ class Collect(object):
         # print(f"data dict {data}")
         temp_img = (img - img.min()) / (img.max() - img.min())
         save_image(temp_img, save_dir+"collect_out_input.png")
-        seg = data['gt_semantic_seg'].data
-        save_image(seg.float(), save_dir+"collect_out_seg.png")
+        try:
+            seg = data['gt_semantic_seg'].data
+            save_image(seg.float(), save_dir+"collect_out_seg.png")
+        except:
+            pass
         return data
 
     def __repr__(self):

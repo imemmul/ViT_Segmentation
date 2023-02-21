@@ -255,6 +255,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         """Classify each pixel."""
         if self.dropout is not None:
             feat = self.dropout(feat)
+        print(f"i am in classify")
         output = self.conv_seg(feat)
         return output
 

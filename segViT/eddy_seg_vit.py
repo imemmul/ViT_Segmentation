@@ -10,7 +10,7 @@ import warnings
 from mmcv.utils import build_from_cfg
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 import numpy as np
-from dataset_parser import EddyDatasetREGISTER, EddyDataset, create_dataloaders
+from ViT_Segmentation.dataset_parser import EddyDatasetREGISTER, EddyDataset, create_dataloaders
 print(device)
 from mmseg.apis import init_random_seed, set_random_seed, train_segmentor
 from mmcv.runner import build_runner, build_optimizer, HOOKS
@@ -201,6 +201,7 @@ def predict_random_img(model, data_dir, label_dir):
     label_img = mpimg.imread(label)
     print(f"Label Dir {label}")
     print(f"img dir {img}")
+    
     result = inference_segmentor(model=model, imgs=img)
     fig = plt.figure(figsize=(10, 6))
     rows = 1

@@ -12,7 +12,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 import numpy as np
 import sys
 sys.path.insert(1, '../segViT/')
-from dataset_parser import EddyDatasetREGISTER
+from ViT_Segmentation.utils.dataset_parser import EddyDatasetREGISTER
 # from eddy_seg_vit import predict_random_img
 print(device)
 from mmseg.apis import init_random_seed, set_random_seed, train_segmentor
@@ -29,16 +29,18 @@ try:
     EddyDatasetREGISTER()
 except:
     pass
-
+import mmseg
 if __name__ == '__main__':
     cfg_path = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segmenter_vit/configs/segmenter/segmenter_vit-b_mask_8x1_512x512_160k_eddy_data.py"
     # cp = "/home/emir/Desktop/dev/myResearch/checkpoints_segmenter/iter_160000.pth"
     cfg = Config.fromfile(cfg_path)
-    model = init_segmentor(config=cfg, device=device)
+    model = build_segmentor(cfg.model)
     datasets = build_dataset(cfg.data.train)
     model.CLASSES = EddyDatasetREGISTER.CLASSES
     model.PALETTE = EddyDatasetREGISTER.PALETTE
     data_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_data_mat/"
     label_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_label/"
     # predict_random_img(model, data_dir, label_dir)
+    print(model)
+    print(mmseg.__version__)
     train_segmentor(model=model, dataset=datasets, cfg=cfg, validate=False)

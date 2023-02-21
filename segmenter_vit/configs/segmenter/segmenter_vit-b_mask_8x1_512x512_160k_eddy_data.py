@@ -4,7 +4,7 @@ _base_ = [
     '../_base_/schedules/schedule_160k.py'
 ]
 # optimizer = dict(lr=0.003, weight_decay=0.0)
-optimizer = dict(type='Adam', lr=0.0003, betas=(0.9, 0.999), weight_decay=0.01)
+# optimizer = dict(type='SGD', lr=0.0003, betas=(0.9, 0.999), weight_decay=0.01)
 work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segmenter_vit/output"
 
 img_norm_cfg = dict(

@@ -1,5 +1,5 @@
 from mmseg.models.decode_heads.atm_head import ATMHead
-from dataset_parser import EddyDatasetREGISTER
+from ViT_Segmentation.utils.dataset_parser import EddyDatasetREGISTER
 
 
 def register_modules():

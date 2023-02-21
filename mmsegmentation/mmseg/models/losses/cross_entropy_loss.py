@@ -46,7 +46,7 @@ def cross_entropy(pred,
     print(f"ignore index in ce {ignore_index}")
     print(f"label max {label.max()}, min {label.min()}")
     save_image(label.float(), save_dir+"label_in_ce_softmax.png")
-    save_image(pred, save_dir+"pred_in_ce_softmax.png")
+    save_image(pred, save_dir+"pred_in_ce_softmax_1.png")
     loss = F.cross_entropy(
         pred,
         label,
@@ -141,7 +141,7 @@ def binary_cross_entropy(pred,
         except:
             print("blank image")
             # this shouldn't assert
-        # assert label[label != ignore_index].max() <= 1, \ 
+        assert label[label != ignore_index].max() <= 1
         #     'For pred with shape [N, 1, H, W], its label must have at ' \
         #     'most 2 classes'
         pred = pred.squeeze(1)

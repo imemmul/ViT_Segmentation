@@ -6,8 +6,7 @@ from torch.utils.data import DataLoader, Dataset
 import scipy.io as sio
 import matplotlib.image as mpimg
 import os.path as osp
-from CustomMatDataset import CustomMatDataset
-
+from .CustomMatDataset import CustomMatDataset
 
 
 import mmcv
@@ -321,12 +320,24 @@ def revert_gray_scale(ori_dir, save_dir):
 
         masks = torch.stack(masks, dim=0)
         mpimg.imsave(save_dir+dir, masks[0], cmap='gray')
+import time
+import shutil
+def remove_non_labeled_gts_data(data_dir, label_dir, data_dst, label_dst):
+    count_blank = 0
+    count = 0
+    for dir in os.listdir(label_dir):
+        img = mpimg.imread(label_dir+dir)
+        if (img.max() == 0):
+            print("Blank img")
+        else:
+            count += 1
+            print("nonBlank")
+            shutil.move(label_dir+dir, label_dst)
+            shutil.move(data_dir+dir[:-3]+'mat', data_dst)
+    print(count_blank)
+    print(count)
+    print(count + count_blank)
 
-
-
-class staticVariable():
-    max = 0
-    min = 0
 
 def load_mat_img(dir):
     img_file = sio.loadmat(dir)
@@ -352,10 +363,16 @@ if __name__ == "__main__":
     valid_label_aug = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label_aug/"
     reverted_train = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_annot_aug_reverted/"
     reverted_valid = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_annot_aug_reverted/"
+    dst_data = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_data_aug_non/'
+    dst_label = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_label_aug_non/'
+    
     split = 0.85
     # split_mat_to_split(split=split, train_dir=train_aug_mat, valid_dir=valid_aug_mat, ori_dir=aug_data)
-    print(len(os.listdir(train_aug_mat)))
-    print(len(os.listdir(valid_aug_mat)))
+    # print(len(os.listdir(train_aug_mat)))
+    # print(len(os.listdir(valid_aug_mat)))
+    # remove_non_labeled_gts_data(train_aug_mat, train_label_aug, dst_data, dst_label)
+    print(len(os.listdir(dst_data)))
+    print(len(os.listdir(dst_label)))
     # convert_rgb_annot2_gray_split(convert_dir=aug_label, split=split, train_converted=train_label_aug, valid_converted=valid_label_aug)
     # print(len(os.listdir(train_label_aug)))
     # print(len(os.listdir(valid_label_aug)))

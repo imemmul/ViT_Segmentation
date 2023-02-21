@@ -7,7 +7,7 @@ from mmcv.utils import deprecated_api_warning, is_tuple_of
 from numpy import random
 import matplotlib.image as mpimg
 from ..builder import PIPELINES
-
+from torchvision.utils import save_image
 
 save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
@@ -495,16 +495,19 @@ class Normalize(object):
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
+        results['img'] = results['img'].astype(float)
         img = results['img']
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"normalize_input.png", temp_img)
+        temp_img = (img - img.min()) / (img.max() - img.min())
+        mpimg.imsave(save_dir+"normalize_input.png", temp_img)
         
         results['img'] = mmcv.imnormalize(results['img'], self.mean, self.std,
-                                          self.to_rgb)
+                                          self.to_rgb) 
         
         img = results['img']
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"normalize_output.png", temp_img)
+        temp_img = (img - img.min()) / (img.max() - img.min())
+        print(f"min img {temp_img.min()}")
+        print(f"max img {temp_img.max()}")
+        mpimg.imsave(save_dir+"normalize_out.png", temp_img)
         
         results['img_norm_cfg'] = dict(
             mean=self.mean, std=self.std, to_rgb=self.to_rgb)
