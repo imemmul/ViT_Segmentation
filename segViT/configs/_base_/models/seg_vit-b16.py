@@ -29,14 +29,12 @@ model = dict(
         img_size=img_size,
         in_channels=in_channels,
         channels=in_channels,
-        num_classes=1,
         num_layers=3,
         num_heads=12,
         # use_stages=len(out_indices),
         embed_dims=in_channels // 2,
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=True),
-        ignore_index = 255
     ),
     test_cfg=dict(mode='whole', crop_size=(256, 256)),
 )

@@ -29,10 +29,12 @@ model = dict(
         in_channels=in_channels,
         channels=in_channels,
         embed_dims=in_channels // 2,
+        out_channels = 1,
+        num_classes = 2,
         num_heads=12,
         # use_stages=len(out_indices),
         loss_decode=dict(
-            type='CrossEntropyLoss', avg_non_ignore=False, use_sigmoid=True), #use sigmoid
+            type='CrossEntropyLoss', avg_non_ignore=True, use_sigmoid=True), #use sigmoid
     ),
     test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(608, 608)),
 )

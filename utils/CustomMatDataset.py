@@ -205,7 +205,7 @@ class CustomMatDataset(Dataset):
         Returns:
             dict: Annotation info of specified index.
         """
-
+        # print(f"img_infos {self.img_infos[idx][0]['ann']}")
         return self.img_infos[idx]['ann']
 
     def pre_pipeline(self, results):

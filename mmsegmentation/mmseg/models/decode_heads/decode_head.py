@@ -90,7 +90,6 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
 
         self.ignore_index = ignore_index
         self.align_corners = align_corners
-
         if out_channels is None:
             if num_classes == 2:
                 warnings.warn('For binary segmentation, we suggest using'
@@ -255,7 +254,6 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         """Classify each pixel."""
         if self.dropout is not None:
             feat = self.dropout(feat)
-        print(f"i am in classify")
         output = self.conv_seg(feat)
         return output
 
@@ -291,8 +289,8 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
                     seg_label,
                     weight=seg_weight,
                     ignore_index=self.ignore_index)
-        print(f"ignore_index decode {self.ignore_index}")
         save_image(seg_logit, save_dir+"seg_logit_pred.png")
+        print(seg_logit.shape)
         # save_image(seg_label.float(), save_dir+"before_acc_label.png")
         loss['acc_seg'] = accuracy(
             seg_logit.float(), seg_label.float(), ignore_index=self.ignore_index, topk=0) #topk = 0 should be given

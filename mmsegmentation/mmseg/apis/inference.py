@@ -11,8 +11,8 @@ from mmseg.models import build_segmentor
 import matplotlib.image as mpimg
 import sys
 from torchvision.utils import save_image
-# sys.path.insert(, '/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/')
-# from dataset_parser import EddyDatasetREGISTER
+sys.path.insert(0, '....')
+from utils.dataset_parser import EddyDatasetREGISTER
 
 save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
@@ -39,12 +39,17 @@ def init_segmentor(config, checkpoint=None, device='cuda:0'):
     model = build_segmentor(config.model, test_cfg=config.get('test_cfg'))
     if checkpoint is not None:
         checkpoint = load_checkpoint(model, checkpoint, map_location='cpu')
-        model.CLASSES = checkpoint['meta']['CLASSES']
-        model.PALETTE = checkpoint['meta']['PALETTE']
-        # try:    
-        #     model.PALETTE = checkpoint['meta']['PALETTE']
-        # except:
-        #     model.PALETTE = EddyDatasetREGISTER.PALETTE
+        # doesn't pass CLASSES and PALETTE while training check this !!! 
+        # model.CLASSES = checkpoint['meta']['CLASSES']
+        # model.PALETTE = checkpoint['meta']['PALETTE']
+        try:    
+            model.PALETTE = checkpoint['meta']['PALETTE']
+        except:
+            model.PALETTE = EddyDatasetREGISTER.PALETTE
+        try:
+            model.CLASSES = checkpoint['meta']['PALETTE']
+        except:
+            model.CLASSES = EddyDatasetREGISTER.CLASSES
     model.cfg = config  # save the config in the model for convenience
     model.to(device)
     model.eval()
@@ -121,6 +126,7 @@ def inference_segmentor(model, imgs):
     # forward the model
     with torch.no_grad():
         result = model(return_loss=False, rescale=True, **data)
+        print(f"result shape is {type(result[0])}")
     return result
 
 

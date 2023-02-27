@@ -136,10 +136,10 @@ def binary_cross_entropy(pred,
         # As the ignore_index often set as 255, so the
         # binary class label check should mask out
         # ignore_index
-        try:
-            print(f"problem value {label[label != ignore_index].max()}")
-        except:
-            print("blank image")
+        # try:
+        #     print(f"problem value {label[label != ignore_index].max()}")
+        # except:
+        #     print("blank image")
             # this shouldn't assert
         assert label[label != ignore_index].max() <= 1
         #     'For pred with shape [N, 1, H, W], its label must have at ' \
