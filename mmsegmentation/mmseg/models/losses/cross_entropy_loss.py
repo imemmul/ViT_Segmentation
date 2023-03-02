@@ -10,6 +10,7 @@ from .utils import get_class_weight, weight_reduce_loss
 from torchvision.utils import save_image
 import matplotlib.image as mpimg
 save_dir = "/home/emir/Desktop/dev/model_outputs/"
+import time
 def cross_entropy(pred,
                   label,
                   weight=None,
@@ -123,7 +124,7 @@ def binary_cross_entropy(pred,
     # print(f"pred dict is {pred}")
     # pred_shape = pred["pred"].shape
     print(f"ignore index inside binary cross entropy {ignore_index}")
-    save_image(label.float(), save_dir+"label_tensor_bce.png")
+    # save_image(label.float(), save_dir+"label_tensor_bce.png")
     # print(f"label shape is {label.shape}")
     # print(f"label combined with ignore index = {label}")
     # print(f"pred shape is {pred_shape}")
@@ -165,7 +166,7 @@ def binary_cross_entropy(pred,
     if reduction == 'mean' and avg_factor is None and avg_non_ignore:
         # print(f"calculat")
         avg_factor = valid_mask.sum().item()
-    save_image(label.float(), save_dir+"label_goes_to_bce.png")
+    # save_image(label.float(), save_dir+"label_goes_to_bce.png")
     print(f"pred shape {pred.shape}")
     print(f"label shape {label.shape}")
     loss = F.binary_cross_entropy_with_logits(

@@ -125,7 +125,7 @@ def inference_segmentor(model, imgs):
     save_image(img, save_dir+'inference_segmentor.png')
     # forward the model
     with torch.no_grad():
-        result = model(return_loss=False, rescale=True, **data)
+        result = model(return_loss=False, rescale=False, **data)
         print(f"result shape is {type(result[0])}")
     return result
 

@@ -69,6 +69,7 @@ def run_test(cfg, distributed, cp_path):
         print(f"results try {metric}")
         
 import scipy.io as sio
+from mmseg.apis.inference import show_result_pyplot
 def predict_random_image(model, data_dir, label_dir, save_path):
     datas = os.listdir(data_dir)
     rand_idx = np.random.randint(len(datas))
@@ -80,10 +81,12 @@ def predict_random_image(model, data_dir, label_dir, save_path):
     mat = sio.loadmat(data_im)
     matX = mat["vxSample"]
     matY = mat["vySample"]
-    data = np.stack((matX, matY, np.zeros(matX.shape)), -1)
-    data = (data - data.min()) / (data.max() - data.min())
+    data_prev = np.stack((matX, matY, np.zeros(matX.shape)), -1)
+    data_new = (data_prev - data_prev.min()) / (data_prev.max() - data_prev.min())
     label = mpimg.imread(label_dir)
     result = inference_segmentor(model=model, imgs=data_dir+img_dir)
-    mpimg.imsave(save_path+"predict.png", result[0])
-    mpimg.imsave(save_path+"label.png", label)
-    mpimg.imsave(save_path+"data.png", data)
+    if save_path is not None:  
+        mpimg.imsave(save_path+"predict.png", result[0])
+        mpimg.imsave(save_path+"label.png", label)
+        mpimg.imsave(save_path+"data.png", data_new)
+        show_result_pyplot(model, img=data_prev, result=result, out_file=save_path+"result.png")

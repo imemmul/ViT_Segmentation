@@ -229,6 +229,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
+        print(f"type of self in decode_head {type(self)}")
         seg_logits = self(inputs)
         losses = self.losses(seg_logits, gt_semantic_seg)
         return losses
