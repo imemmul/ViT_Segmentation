@@ -13,7 +13,6 @@ import matplotlib.image as mpimg
 from mmseg.apis.test import single_gpu_test
 from utils.utils import run_test, predict_random_image
 
-
 try:
     EddyDatasetREGISTER()
 except:
@@ -27,19 +26,15 @@ def main():
     
     
     
-    cfg_path = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/conv_based_segmentors/configs/fcn_unet_s5/fcn_unet_s5-d16-eddy.py"
+    cfg_path = "./configs/fcn_unet_s5/fcn_unet_s5-d16-eddy.py"
     cfg = Config.fromfile(cfg_path)
-    cp_path = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/conv_based_segmentors/output/iter_80000.pth"
-    # model = build_segmentor(cfg=cfg.model)
-    # model.CLASSES = EddyDatasetREGISTER.CLASSES
-    # model.ALETTE = EddyDatasetREGISTER.PALETTE
-    model = init_segmentor(config=cfg, checkpoint=cp_path, device=device)
+    model = build_segmentor(cfg=cfg.model)
+    model.CLASSES = EddyDatasetREGISTER.CLASSES
+    model.PALETTE = EddyDatasetREGISTER.PALETTE
+    # model = init_segmentor(config=cfg, checkpoint=cp_path, device=device)
     datasets = build_dataset(cfg.data.train)
     # print(model)
     train_segmentor(model, dataset=datasets, cfg=cfg ,validate=False)
-    save_path = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/conv_based_segmentors/output/"
-    data_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_data_aug_non/"
-    label_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/train_label_aug_non/"
     import time
     
     # for i in range(10):

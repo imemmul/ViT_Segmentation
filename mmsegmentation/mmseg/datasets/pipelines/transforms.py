@@ -9,7 +9,7 @@ import matplotlib.image as mpimg
 from ..builder import PIPELINES
 from torchvision.utils import save_image
 
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
+save_dir = "/cta/users/emir/dev/model_outputs/"
 
 @PIPELINES.register_module()
 class ResizeToMultiple(object):

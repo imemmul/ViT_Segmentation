@@ -10,7 +10,10 @@ import warnings
 from mmcv.utils import build_from_cfg
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 import numpy as np
-from ViT_Segmentation.dataset_parser import EddyDatasetREGISTER, EddyDataset, create_dataloaders
+import sys
+sys.path.insert(0, '..')
+from utils.dataset_parser import EddyDatasetREGISTER
+from utils.utils import run_test
 print(device)
 from mmseg.apis import init_random_seed, set_random_seed, train_segmentor
 from mmcv.runner import build_runner, build_optimizer, HOOKS
@@ -233,15 +236,12 @@ def calculate_iou(model, dir, label_dir):
 
 
 if __name__ == "__main__":
-    seg_Vit_L_cfg = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/configs/SegViT_L_EddyData.py"
-    cp = "/home/emir/Desktop/dev/myResearch/checkpoints/iter_150000.pth"
-    # cp_20 = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output/iter_20000.pth"
-    valid_dir = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_data_mat/"
-    valid_label = "/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/valid_label/"
+    seg_Vit_L_cfg = "/cta/users/emir/dev/ViT_Segmentation/segViT/configs/SegViT_L_EddyData.py"
     out_dir = "/home/emir/Desktop/dev/img_output/"
     cfg = Config.fromfile(seg_Vit_L_cfg)
-    cfg = set_batch_size(cfg, 1) # batch size of 1
-    model = init_segmentor(cfg, device=device)
+    model = build_segmentor(cfg.model)
+    model.CLASSES = EddyDatasetREGISTER.CLASSES
+    model.PALETTE = EddyDatasetREGISTER.PALETTE
     datasets = build_dataset(cfg.data.train) # with customized pipeline registers we are able to train our model with eddy data
-    # print(model)
+    print(model)
     train_segmentor(model, cfg=cfg, dataset=datasets, validate=False)

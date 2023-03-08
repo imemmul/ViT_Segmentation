@@ -1,9 +1,9 @@
-checkpoint = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/ViT-B_16.npz'
+checkpoint = ""
 # model settings
 backbone_norm_cfg = dict(type='LN', eps=1e-6, requires_grad=True)
 img_size = 512
 in_channels = 768
-# out_indices = [5, 7, 11]
+out_indices = [5, 7, 11]
 model = dict(
     type='EncoderDecoder',
     pretrained=checkpoint,
@@ -18,7 +18,7 @@ model = dict(
         drop_path_rate=0.1,
         attn_drop_rate=0.0,
         drop_rate=0.0,
-        # out_indices=out_indices,
+        out_indices=out_indices,
         final_norm=False,
         norm_cfg=backbone_norm_cfg,
         with_cls_token=False,
@@ -31,7 +31,7 @@ model = dict(
         channels=in_channels,
         num_layers=3,
         num_heads=12,
-        # use_stages=len(out_indices),
+        use_stages=len(out_indices),
         embed_dims=in_channels // 2,
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=True),

@@ -6,7 +6,7 @@ _base_ = [
 gpu_ids = range(1)
 seed = 42
 device = 'cuda'
-work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/conv_based_segmentors/output/"
+work_dir = "/cta/users/emir/dev/ViT_Segmentation/conv_based_segmentors/output/"
 model = dict(
     decode_head=dict(loss_decode=[
         dict(type='CrossEntropyLoss', loss_name='loss_ce', loss_weight=1.0, avg_non_ignore=True, use_sigmoid=True),

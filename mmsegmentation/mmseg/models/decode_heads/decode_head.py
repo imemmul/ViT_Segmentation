@@ -12,7 +12,7 @@ from ..builder import build_loss
 from ..losses import accuracy
 from torchvision.utils import save_image
 
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
+save_dir = "/cta/users/emir/dev/model_outputs/"
 
 class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
     """Base class for BaseDecodeHead.

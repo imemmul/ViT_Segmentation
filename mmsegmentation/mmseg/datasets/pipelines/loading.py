@@ -8,7 +8,7 @@ from ..builder import PIPELINES
 from torchvision.utils import save_image
 import matplotlib.image as mpimg
 
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
+save_dir = "/cta/users/emir/dev/model_outputs/"
 
 @PIPELINES.register_module()
 class LoadImageFromFile(object):
@@ -61,15 +61,11 @@ class LoadImageFromFile(object):
                                 results['img_info']['filename'])
         else:
             filename = results['img_info']['filename']
-        if filename[-3:] == 'mat':
-            img_mat = sio.loadmat(filename)
-            img_x = img_mat["vxSample"]
-            img_y = img_mat["vySample"]
-            img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
-        else:
-            img_bytes = self.file_client.get(filename)
-            img = mmcv.imfrombytes(
-            img_bytes, flag=self.color_type, backend=self.imdecode_backend)
+        print(f"filename in loading {filename}")
+        img_mat = sio.loadmat(filename)
+        img_x = img_mat["vxSample"]
+        img_y = img_mat["vySample"]
+        img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
             
         if self.to_float32:
             img = img.astype(np.float32)

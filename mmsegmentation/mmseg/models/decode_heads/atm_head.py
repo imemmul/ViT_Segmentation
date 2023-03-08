@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from mmseg.models.losses import accuracy
 from torchvision.utils import save_image
 
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
+save_dir = "/cta/users/emir/dev/model_outputs/"
 
 def trunc_normal_init(module: nn.Module,
                       mean: float = 0,

@@ -9,7 +9,7 @@ import matplotlib.image as mpimg
 from torchvision.utils import save_image
 from ..builder import PIPELINES
 
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
+save_dir = "/cta/users/emir/dev/model_outputs/"
 
 def to_tensor(data):
     """Convert objects of various python types to :obj:`torch.Tensor`.

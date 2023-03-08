@@ -1,0 +1,189 @@
+Tue Mar  7 13:31:30 2023       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 525.85.12    Driver Version: 525.85.12    CUDA Version: 12.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA RTX A6000    On   | 00000000:65:00.0 Off |                  Off |
+| 30%   41C    P8    30W / 300W |     83MiB / 49140MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|    0   N/A  N/A      3991      G   /usr/lib/xorg/Xorg                 64MiB |
+|    0   N/A  N/A      4929      G   /usr/bin/gnome-shell               17MiB |
++-----------------------------------------------------------------------------+
+/cta/users/emir/dev/ViT_Segmentation/conv_based_segmentors
+
+======================================================================================
+SHELL=/bin/bash
+SLURM_JOB_USER=emir
+SLURM_TASKS_PER_NODE=4
+SLURM_JOB_UID=1001007
+SLURM_TASK_PID=1554358
+CONDA_EXE=/cta/users/emir/anaconda3/bin/conda
+_CE_M=
+LMOD_arch=x86_64
+SLURM_JOB_GPUS=1
+SLURM_LOCALID=0
+SLURM_SUBMIT_DIR=/cta/users/emir/dev/ViT_Segmentation/conv_based_segmentors
+HOSTNAME=nova82
+SLURMD_NODENAME=nova82
+SLURM_NODE_ALIASES=(null)
+SLURM_CLUSTER_NAME=ozer
+SLURM_CPUS_ON_NODE=4
+SLURM_JOB_CPUS_PER_NODE=4
+LMOD_DIR=/usr/share/lmod/lmod/libexec/
+SLURM_GPUS_ON_NODE=1
+PWD=/cta/users/emir/dev/ViT_Segmentation/conv_based_segmentors
+SLURM_GTIDS=0
+LOGNAME=emir
+XDG_SESSION_TYPE=tty
+CONDA_PREFIX=/cta/users/emir/anaconda3/envs/emirdlp
+SLURM_JOB_PARTITION=main
+MODULESHOME=/usr/share/lmod/lmod
+MANPATH=/usr/share/lmod/lmod/share/man::
+ROCR_VISIBLE_DEVICES=0
+LMOD_PREPEND_BLOCK=normal
+SLURM_JOB_NUM_NODES=1
+SLURM_JOBID=360
+SLURM_JOB_QOS=normal
+MOTD_SHOWN=pam
+HOME=/cta/users/emir
+LANG=C.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+SLURM_PROCID=0
+CONDA_PROMPT_MODIFIER=(emirdlp) 
+TMPDIR=/tmp
+SLURM_NTASKS=4
+SLURM_TOPOLOGY_ADDR=nova82
+LMOD_VERSION=6.6
+SSH_CONNECTION=172.31.0.9 65262 10.100.13.10 22
+MODULEPATH_ROOT=/usr/modulefiles
+SLURM_TOPOLOGY_ADDR_PATTERN=node
+CUDA_VISIBLE_DEVICES=0
+SLURM_MEM_PER_CPU=1000
+LESSCLOSE=/usr/bin/lesspipe %s %s
+XDG_SESSION_CLASS=user
+LMOD_PKG=/usr/share/lmod/lmod
+SLURM_WORKING_CLUSTER=ozer:172.16.1.9:6817:9472:101
+TERM=xterm-256color
+_CE_CONDA=
+LESSOPEN=| /usr/bin/lesspipe %s
+USER=emir
+SLURM_NODELIST=nova82
+ENVIRONMENT=BATCH
+GPU_DEVICE_ORDINAL=0
+CONDA_SHLVL=1
+SLURM_JOB_ACCOUNT=users
+SLURM_PRIO_PROCESS=0
+SLURM_NPROCS=4
+LMOD_SETTARG_CMD=:
+SHLVL=2
+SLURM_NNODES=1
+BASH_ENV=/usr/share/lmod/lmod/init/bash
+LMOD_FULL_SETTARG_SUPPORT=no
+LMOD_sys=Linux
+XDG_SESSION_ID=7793
+SLURM_SUBMIT_HOST=login
+CONDA_PYTHON_EXE=/cta/users/emir/anaconda3/bin/python
+LC_CTYPE=C.UTF-8
+XDG_RUNTIME_DIR=/run/user/1001007
+LMOD_COLORIZE=yes
+SLURM_JOB_ID=360
+SLURM_NODEID=0
+SSH_CLIENT=172.31.0.9 65262 22
+CONDA_DEFAULT_ENV=emirdlp
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+SLURM_CONF=/etc/slurm/slurm.conf
+PATH=/cta/users/emir/anaconda3/envs/emirdlp/bin:/cta/users/emir/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+SLURM_JOB_NAME=eddy_seg
+MODULEPATH=/cta/etc/mod
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001007/bus
+LMOD_CMD=/usr/share/lmod/lmod/libexec/lmod
+SSH_TTY=/dev/pts/19
+SLURM_JOB_GID=1001000
+OLDPWD=/cta/users/emir/dev/ViT_Segmentation
+SLURM_JOB_NODELIST=nova82
+BASH_FUNC_ml%%=() {  eval $($LMOD_DIR/ml_cmd "$@")
+}
+BASH_FUNC_module%%=() {  eval `$LMOD_CMD bash "$@"`
+}
+_=/usr/bin/env
+======================================================================================
+
+======================================================================================
+Setting stack size to unlimited...
+real-time non-blocking time  (microseconds, -R) unlimited
+core file size              (blocks, -c) 0
+data seg size               (kbytes, -d) unlimited
+scheduling priority                 (-e) 0
+file size                   (blocks, -f) unlimited
+pending signals                     (-i) 513538
+max locked memory           (kbytes, -l) unlimited
+max memory size             (kbytes, -m) 4096000
+open files                          (-n) 1024
+pipe size                (512 bytes, -p) 8
+POSIX message queues         (bytes, -q) 819200
+real-time priority                  (-r) 0
+stack size                  (kbytes, -s) unlimited
+cpu time                   (seconds, -t) unlimited
+max user processes                  (-u) 513538
+virtual memory              (kbytes, -v) unlimited
+file locks                          (-x) unlimited
+
+Running Example Job...!
+===============================================================================
+Running Python script...
+/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/__init__.py:20: UserWarning: On January 1, 2023, MMCV will release v2.0.0, in which it will remove components related to the training process and add a data transformation module. In addition, it will rename the package names mmcv to mmcv-lite and mmcv-full to mmcv. See https://github.com/open-mmlab/mmcv/blob/master/docs/en/compatibility.md for more details.
+  warnings.warn(
+/cta/users/emir/dev/ViT_Segmentation/mmsegmentation/mmseg/models/decode_heads/decode_head.py:111: UserWarning: threshold is not defined for binary, and defaultsto 0.3
+  warnings.warn('threshold is not defined for binary, and defaults'
+/cta/users/emir/dev/ViT_Segmentation/mmsegmentation/mmseg/models/losses/cross_entropy_loss.py:261: UserWarning: Default ``avg_non_ignore`` is False, if you would like to ignore the certain label and average loss over non-ignore labels, which is the same with PyTorch official cross_entropy, set ``avg_non_ignore=True``.
+  warnings.warn(
+2023-03-07 13:31:35,636 - mmseg - INFO - Loaded 9180 images
+cuda
+optimzier ccfg {'type': 'Adam', 'lr': 0.0003}
+ct type DefaultOptimizerConstructor
+Traceback (most recent call last):
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/utils/registry.py", line 69, in build_from_cfg
+    return obj_cls(**args)
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/runner/base_runner.py", line 115, in __init__
+    mmcv.mkdir_or_exist(self.work_dir)
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/utils/path.py", line 30, in mkdir_or_exist
+    os.makedirs(dir_name, mode=mode, exist_ok=True)
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/os.py", line 215, in makedirs
+    makedirs(head, exist_ok=exist_ok)
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/os.py", line 215, in makedirs
+    makedirs(head, exist_ok=exist_ok)
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/os.py", line 215, in makedirs
+    makedirs(head, exist_ok=exist_ok)
+  [Previous line repeated 4 more times]
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/os.py", line 225, in makedirs
+    mkdir(name, mode)
+PermissionError: [Errno 13] Permission denied: '/home/emir'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/cta/users/emir/dev/ViT_Segmentation/conv_based_segmentors/main.py", line 48, in <module>
+    main()
+  File "/cta/users/emir/dev/ViT_Segmentation/conv_based_segmentors/main.py", line 39, in main
+    train_segmentor(model, dataset=datasets, cfg=cfg ,validate=False)
+  File "/cta/users/emir/dev/ViT_Segmentation/mmsegmentation/mmseg/apis/train.py", line 129, in train_segmentor
+    runner = build_runner(
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/runner/builder.py", line 24, in build_runner
+    runner = runner_constructor()
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/runner/default_constructor.py", line 47, in __call__
+    return RUNNERS.build(self.runner_cfg, default_args=self.default_args)
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/utils/registry.py", line 237, in build
+    return self.build_func(*args, **kwargs, registry=self)
+  File "/cta/users/emir/anaconda3/envs/emirdlp/lib/python3.10/site-packages/mmcv/utils/registry.py", line 72, in build_from_cfg
+    raise type(e)(f'{obj_cls.__name__}: {e}')
+PermissionError: IterBasedRunner: [Errno 13] Permission denied: '/home/emir'

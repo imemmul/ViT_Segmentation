@@ -4,6 +4,6 @@
 # learning policy
 lr_config = dict(policy='poly', power=0.9, min_lr=1e-4, by_epoch=False)
 # runtime settings
-runner = dict(type='IterBasedRunner', max_iters=200000)
-checkpoint_config = dict(by_epoch=False, interval=100000)
-evaluation = dict(interval=1000, metric='mIoU')
+runner = dict(type='IterBasedRunner', max_iters=320000)
+checkpoint_config = dict(by_epoch=False, interval=160000)
+evaluation = dict(interval=80000, metric='mIoU')

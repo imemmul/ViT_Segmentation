@@ -9,7 +9,7 @@ from ..builder import LOSSES
 from .utils import get_class_weight, weight_reduce_loss
 from torchvision.utils import save_image
 import matplotlib.image as mpimg
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
+save_dir = "/cta/users/emir/dev/model_outputs/"
 import time
 def cross_entropy(pred,
                   label,

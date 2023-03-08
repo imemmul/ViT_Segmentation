@@ -8,21 +8,18 @@ in_channels = 768
 img_size = 640
 gpu_ids = range(1)
 seed = 42
-#checkpoint = '/home/emir/dev/segmentation_eddies/downloads/checkpoints/download'
 checkpoint = ""
 device = 'cuda'
-#work_dir = "/home/emir/dev/segmentation_eddies/ViT_Segmentation/segViT/output/"
-work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segViT/output"
-
+work_dir = "/cta/users/emir/dev/ViT_Segmentation/segViT/output/"
+out_indices = [5, 7, 11]
 model = dict(
-    #pretrained=checkpoint,
     backbone=dict(
         img_size=(640, 640),
         embed_dims=768,
         num_layers=12,
         drop_path_rate=0.3,
         num_heads=12,
-        # out_indices=out_indices
+        out_indices=out_indices
         ),
     decode_head=dict(
         img_size=img_size,
@@ -32,9 +29,10 @@ model = dict(
         out_channels = 1,
         num_classes = 2,
         num_heads=12,
-        # use_stages=len(out_indices),
+        use_stages=len(out_indices),
         loss_decode=dict(
             type='CrossEntropyLoss', avg_non_ignore=True, use_sigmoid=True), #use sigmoid
+        ignore_index = 0
     ),
     test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(608, 608)),
 )
