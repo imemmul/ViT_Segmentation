@@ -20,7 +20,6 @@ def dice_loss(pred,
     assert pred.shape[0] == target.shape[0]
     total_loss = 0
     num_classes = pred.shape[1]
-    print(f"num_classes {num_classes}")
     for i in range(num_classes):
         if i != ignore_index:
             dice_loss = binary_dice_loss(

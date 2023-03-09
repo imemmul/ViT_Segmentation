@@ -5,7 +5,7 @@ _base_ = [
 ]
 # optimizer = dict(lr=0.003, weight_decay=0.0)
 # optimizer = dict(type='SGD', lr=0.0003, betas=(0.9, 0.999), weight_decay=0.01)
-work_dir = "/home/emir/Desktop/dev/myResearch/src/ViT_Segmentation/segmenter_vit/output"
+work_dir = "/cta/users/emir/dev/ViT_Segmentation/segmenter_vit/output/"
 
 img_norm_cfg = dict(
     mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=True)
@@ -43,7 +43,7 @@ test_pipeline = [
 ]
 data = dict(
     # num_gpus: 8 -> batch_size: 8
-    samples_per_gpu=1,
+    samples_per_gpu=8,
     train=dict(pipeline=train_pipeline),
     val=dict(pipeline=test_pipeline),
     test=dict(pipeline=test_pipeline))

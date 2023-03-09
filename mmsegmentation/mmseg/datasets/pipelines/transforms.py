@@ -5,11 +5,9 @@ import mmcv
 import numpy as np
 from mmcv.utils import deprecated_api_warning, is_tuple_of
 from numpy import random
-import matplotlib.image as mpimg
-from ..builder import PIPELINES
-from torchvision.utils import save_image
 
-save_dir = "/cta/users/emir/dev/model_outputs/"
+from ..builder import PIPELINES
+
 
 @PIPELINES.register_module()
 class ResizeToMultiple(object):
@@ -248,7 +246,6 @@ class Resize(object):
 
     def _resize_img(self, results):
         """Resize images with ``results['scale']``."""
-        # print(f"results scale {results['scale']}")
         if self.keep_ratio:
             if self.min_size is not None:
                 # TODO: Now 'min_size' is an 'int' which means the minimum
@@ -280,8 +277,6 @@ class Resize(object):
                 results['img'], results['scale'], return_scale=True)
         scale_factor = np.array([w_scale, h_scale, w_scale, h_scale],
                                 dtype=np.float32)
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"resize.png", temp_img)
         results['img'] = img
         results['img_shape'] = img.shape
         results['pad_shape'] = img.shape  # in case that there is no padding
@@ -290,7 +285,6 @@ class Resize(object):
 
     def _resize_seg(self, results):
         """Resize semantic segmentation map with ``results['scale']``."""
-        # print(f"resize seg {results}")
         for key in results.get('seg_fields', []):
             if self.keep_ratio:
                 gt_seg = mmcv.imrescale(
@@ -299,11 +293,6 @@ class Resize(object):
                 gt_seg = mmcv.imresize(
                     results[key], results['scale'], interpolation='nearest')
             results[key] = gt_seg
-
-        # img = results["gt_semantic_seg"]
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"resize_annot.png", img)
-        
 
     def __call__(self, results):
         """Call function to resize images, bounding boxes, masks, semantic
@@ -375,15 +364,12 @@ class RandomFlip(object):
             # flip image
             results['img'] = mmcv.imflip(
                 results['img'], direction=results['flip_direction'])
+
             # flip segs
             for key in results.get('seg_fields', []):
                 # use copy() to make numpy stride positive
                 results[key] = mmcv.imflip(
                     results[key], direction=results['flip_direction']).copy()
-        # print(f"img in flip {img.shape}")
-        img = results['img']
-        # img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"random_flip.png", img)
         return results
 
     def __repr__(self):
@@ -421,18 +407,12 @@ class Pad(object):
 
     def _pad_img(self, results):
         """Pad images according to ``self.size``."""
-        img = results['img']
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"pad_input.png", temp_img)
         if self.size is not None:
             padded_img = mmcv.impad(
                 results['img'], shape=self.size, pad_val=self.pad_val)
         elif self.size_divisor is not None:
             padded_img = mmcv.impad_to_multiple(
                 results['img'], self.size_divisor, pad_val=self.pad_val)
-        img = results['img']
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"pad_output.png", temp_img)
         results['img'] = padded_img
         results['pad_shape'] = padded_img.shape
         results['pad_fixed_size'] = self.size
@@ -470,7 +450,9 @@ class Pad(object):
 @PIPELINES.register_module()
 class Normalize(object):
     """Normalize the image.
+
     Added key is "img_norm_cfg".
+
     Args:
         mean (sequence): Mean values of 3 channels.
         std (sequence): Std values of 3 channels.
@@ -485,20 +467,17 @@ class Normalize(object):
 
     def __call__(self, results):
         """Call function to normalize images.
+
         Args:
             results (dict): Result dict from loading pipeline.
+
         Returns:
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
-        temp_img = results['img']
-        temp_img = (temp_img - temp_img.min()) / (temp_img.max() - temp_img.min())
-        mpimg.imsave(save_dir+"normalize_input.png", temp_img)
+
         results['img'] = mmcv.imnormalize(results['img'], self.mean, self.std,
                                           self.to_rgb)
-        temp_img = results['img']
-        temp_img = (temp_img - temp_img.min()) / (temp_img.max() - temp_img.min())
-        mpimg.imsave(save_dir+"normalize_out.png", temp_img)
         results['img_norm_cfg'] = dict(
             mean=self.mean, std=self.std, to_rgb=self.to_rgb)
         return results
@@ -508,7 +487,6 @@ class Normalize(object):
         repr_str += f'(mean={self.mean}, std={self.std}, to_rgb=' \
                     f'{self.to_rgb})'
         return repr_str
-
 
 
 @PIPELINES.register_module()
@@ -662,8 +640,6 @@ class RandomCrop(object):
         # crop the image
         img = self.crop(img, crop_bbox)
         img_shape = img.shape
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"random_crop.png", temp_img)
         results['img'] = img
         results['img_shape'] = img_shape
 
@@ -985,6 +961,8 @@ class PhotoMetricDistortion(object):
         # random contrast
         if mode == 0:
             img = self.contrast(img)
+
+        results['img'] = img
         return results
 
     def __repr__(self):

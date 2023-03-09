@@ -5,7 +5,6 @@ import mmcv
 import numpy as np
 import torch
 from mmcv.parallel import DataContainer as DC
-import matplotlib.image as mpimg
 from torchvision.utils import save_image
 from ..builder import PIPELINES
 
@@ -199,21 +198,21 @@ class DefaultFormatBundle(object):
             dict: The result dict contains the data that is formatted with
                 default bundle.
         """
-        img = results['img']
-        # img = (img - img.min()) / (img.max() - img.min())
-        # mpimg.imsave(save_dir+"default_from_bundle.png", img)
+
         if 'img' in results:
             img = results['img']
             if len(img.shape) < 3:
                 img = np.expand_dims(img, -1)
             img = np.ascontiguousarray(img.transpose(2, 0, 1))
             results['img'] = DC(to_tensor(img), stack=True)
+            save_image(results['img'].data.float(), save_dir+"input_img.png")
         if 'gt_semantic_seg' in results:
             # convert to long
             results['gt_semantic_seg'] = DC(
                 to_tensor(results['gt_semantic_seg'][None,
                                                      ...].astype(np.int64)),
                 stack=True)
+            save_image(results['gt_semantic_seg'].data.float(), save_dir+"input_annot.png")
         return results
 
     def __repr__(self):
@@ -286,15 +285,6 @@ class Collect(object):
         data['img_metas'] = DC(img_meta, cpu_only=True)
         for key in self.keys:
             data[key] = results[key]
-        img = data['img'].data
-        # print(f"data dict {data}")
-        temp_img = (img - img.min()) / (img.max() - img.min())
-        save_image(temp_img, save_dir+"collect_out_input.png")
-        try:
-            seg = data['gt_semantic_seg'].data
-            save_image(seg.float(), save_dir+"collect_out_seg.png")
-        except:
-            pass
         return data
 
     def __repr__(self):

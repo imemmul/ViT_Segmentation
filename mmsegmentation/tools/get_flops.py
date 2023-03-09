@@ -22,13 +22,16 @@ def parse_args():
 
 
 def main():
+
     args = parse_args()
+
     if len(args.shape) == 1:
         input_shape = (3, args.shape[0], args.shape[0])
     elif len(args.shape) == 2:
         input_shape = (3, ) + tuple(args.shape)
     else:
         raise ValueError('invalid input shape')
+
     cfg = Config.fromfile(args.config)
     cfg.model.pretrained = None
     model = build_segmentor(

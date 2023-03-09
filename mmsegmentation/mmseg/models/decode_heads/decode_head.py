@@ -10,9 +10,7 @@ from mmseg.core import build_pixel_sampler
 from mmseg.ops import resize
 from ..builder import build_loss
 from ..losses import accuracy
-from torchvision.utils import save_image
 
-save_dir = "/cta/users/emir/dev/model_outputs/"
 
 class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
     """Base class for BaseDecodeHead.
@@ -54,6 +52,10 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             Default: None.
         align_corners (bool): align_corners argument of F.interpolate.
             Default: False.
+        downsample_label_ratio (int): The ratio to downsample seg_label
+            in losses. downsample_label_ratio > 1 will reduce memory usage.
+            Disabled if downsample_label_ratio = 0.
+            Default: 0.
         init_cfg (dict or list[dict], optional): Initialization config dict.
     """
 
@@ -77,6 +79,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
                  ignore_index=255,
                  sampler=None,
                  align_corners=False,
+                 downsample_label_ratio=0,
                  init_cfg=dict(
                      type='Normal', std=0.01, override=dict(name='conv_seg'))):
         super(BaseDecodeHead, self).__init__(init_cfg)
@@ -90,6 +93,12 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
 
         self.ignore_index = ignore_index
         self.align_corners = align_corners
+        self.downsample_label_ratio = downsample_label_ratio
+        if not isinstance(self.downsample_label_ratio, int) or \
+           self.downsample_label_ratio < 0:
+            warnings.warn('downsample_label_ratio should '
+                          'be set as an integer equal or larger than 0.')
+
         if out_channels is None:
             if num_classes == 2:
                 warnings.warn('For binary segmentation, we suggest using'
@@ -205,6 +214,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             inputs = [inputs[i] for i in self.in_index]
         else:
             inputs = inputs[self.in_index]
+
         return inputs
 
     @auto_fp16()
@@ -229,7 +239,6 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
-        print(f"type of self in decode_head {type(self)}")
         seg_logits = self(inputs)
         losses = self.losses(seg_logits, gt_semantic_seg)
         return losses
@@ -262,7 +271,14 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
     def losses(self, seg_logit, seg_label):
         """Compute segmentation loss."""
         loss = dict()
-        seg_logit = resize( #making 32x32 to 512x512
+        if self.downsample_label_ratio > 0:
+            seg_label = seg_label.float()
+            target_size = (seg_label.shape[2] // self.downsample_label_ratio,
+                           seg_label.shape[3] // self.downsample_label_ratio)
+            seg_label = resize(
+                input=seg_label, size=target_size, mode='nearest')
+            seg_label = seg_label.long()
+        seg_logit = resize(
             input=seg_logit,
             size=seg_label.shape[2:],
             mode='bilinear',
@@ -290,10 +306,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
                     seg_label,
                     weight=seg_weight,
                     ignore_index=self.ignore_index)
-        save_image(seg_logit, save_dir+"seg_logit_pred.png")
-        print(seg_logit.shape)
-        # save_image(seg_label.float(), save_dir+"before_acc_label.png")
+
         loss['acc_seg'] = accuracy(
-            seg_logit.float(), seg_label.float(), ignore_index=self.ignore_index, topk=0) #topk = 0 should be given
-        print(loss)
+            seg_logit, seg_label, ignore_index=self.ignore_index)
         return loss

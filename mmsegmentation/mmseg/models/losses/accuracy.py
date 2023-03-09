@@ -1,9 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch
 import torch.nn as nn
-from torchvision.utils import save_image
 
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 def accuracy(pred, target, topk=1, thresh=None, ignore_index=None):
     """Calculate accuracy according to the prediction and target.

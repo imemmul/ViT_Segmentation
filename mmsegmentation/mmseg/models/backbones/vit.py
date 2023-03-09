@@ -18,11 +18,7 @@ from mmseg.ops import resize
 from mmseg.utils import get_root_logger
 from ..builder import BACKBONES
 from ..utils import PatchEmbed
-from torchvision.utils import save_image
-import matplotlib.image as mpimg
 
-
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 class TransformerEncoderLayer(BaseModule):
     """Implements one encoder layer in Vision Transformer.
@@ -113,6 +109,7 @@ class TransformerEncoderLayer(BaseModule):
         return getattr(self, self.norm2_name)
 
     def forward(self, x):
+
         def _inner_forward(x):
             x = self.attn(self.norm1(x), identity=x)
             x = self.ffn(self.norm2(x), identity=x)
@@ -402,10 +399,7 @@ class VisionTransformer(BaseModule):
 
     def forward(self, inputs):
         B = inputs.shape[0]
-        
-        img = inputs[0]
-        # temp_img = (img - img.min()) / (img.max() - img.min())
-        # save_image(temp_img, save_dir+"vit_input.png")
+
         x, hw_shape = self.patch_embed(inputs)
 
         # stole cls_tokens impl from Phil Wang, thanks

@@ -4,16 +4,10 @@ import mmcv
 import torch
 from mmcv.parallel import collate, scatter
 from mmcv.runner import load_checkpoint
-import numpy as np
-import scipy.io as sio
+
 from mmseg.datasets.pipelines import Compose
 from mmseg.models import build_segmentor
-import matplotlib.image as mpimg
-import sys
-from torchvision.utils import save_image
 
-
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 def init_segmentor(config, checkpoint=None, device='cuda:0'):
     """Initialize a segmentor from config file.
@@ -38,10 +32,8 @@ def init_segmentor(config, checkpoint=None, device='cuda:0'):
     model = build_segmentor(config.model, test_cfg=config.get('test_cfg'))
     if checkpoint is not None:
         checkpoint = load_checkpoint(model, checkpoint, map_location='cpu')
-        # doesn't pass CLASSES and PALETTE while training check this !!! 
         model.CLASSES = checkpoint['meta']['CLASSES']
         model.PALETTE = checkpoint['meta']['PALETTE']
-       
     model.cfg = config  # save the config in the model for convenience
     model.to(device)
     model.eval()
@@ -68,15 +60,7 @@ class LoadImage:
         else:
             results['filename'] = None
             results['ori_filename'] = None
-        if results['img'][-3:] == 'mat':
-            img_mat = sio.loadmat(results['img'])
-            img_x = img_mat["vxSample"]
-            img_y = img_mat["vySample"]
-            img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
-        else:
-            img = mmcv.imread(results['img'])
-        temp_img = (img - img.min()) / (img.max() - img.min())
-        mpimg.imsave(save_dir+"input_inferece.png", temp_img)
+        img = mmcv.imread(results['img'])
         results['img'] = img
         results['img_shape'] = img.shape
         results['ori_shape'] = img.shape
@@ -112,13 +96,10 @@ def inference_segmentor(model, imgs):
         data = scatter(data, [device])[0]
     else:
         data['img_metas'] = [i.data[0] for i in data['img_metas']]
-    img = data['img'][0]
-    img = (img - img.min()) / (img.max() - img.min())
-    save_image(img, save_dir+'inference_segmentor.png')
+
     # forward the model
     with torch.no_grad():
-        result = model(return_loss=False, rescale=False, **data)
-        print(f"result shape is {type(result[0])}")
+        result = model(return_loss=False, rescale=True, **data)
     return result
 
 

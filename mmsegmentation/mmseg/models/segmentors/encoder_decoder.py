@@ -8,8 +8,7 @@ from mmseg.ops import resize
 from .. import builder
 from ..builder import SEGMENTORS
 from .base import BaseSegmentor
-from torchvision.utils import save_image
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
+
 
 @SEGMENTORS.register_module()
 class EncoderDecoder(BaseSegmentor):
@@ -265,8 +264,6 @@ class EncoderDecoder(BaseSegmentor):
     def simple_test(self, img, img_meta, rescale=True):
         """Simple test with single image."""
         seg_logit = self.inference(img, img_meta, rescale)
-        print(f"seg logit shape {seg_logit.squeeze()[0].shape}")
-        save_image(seg_logit.squeeze(), save_dir+"seg_logit_inference.png")
         if self.out_channels == 1:
             seg_pred = (seg_logit >
                         self.decode_head.threshold).to(seg_logit).squeeze(1)

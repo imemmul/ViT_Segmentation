@@ -10,9 +10,7 @@ from mmcv.runner import ModuleList
 from mmseg.models.backbones.vit import TransformerEncoderLayer
 from ..builder import HEADS
 from .decode_head import BaseDecodeHead
-from torchvision.utils import save_image
 
-save_dir = "/home/emir/Desktop/dev/model_outputs/"
 
 @HEADS.register_module()
 class SegmenterMaskTransformerHead(BaseDecodeHead):
@@ -131,5 +129,5 @@ class SegmenterMaskTransformerHead(BaseDecodeHead):
         masks = patches @ cls_seg_feat.transpose(1, 2)
         masks = self.mask_norm(masks)
         masks = masks.permute(0, 2, 1).contiguous().view(b, -1, h, w)
-        save_image(masks, save_dir+"mask_pred_segmenter.png")        
+
         return masks

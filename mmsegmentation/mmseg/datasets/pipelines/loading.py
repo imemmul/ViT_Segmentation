@@ -3,12 +3,9 @@ import os.path as osp
 
 import mmcv
 import numpy as np
-import scipy.io as sio
-from ..builder import PIPELINES
-from torchvision.utils import save_image
-import matplotlib.image as mpimg
 
-save_dir = "/cta/users/emir/dev/model_outputs/"
+from ..builder import PIPELINES
+
 
 @PIPELINES.register_module()
 class LoadImageFromFile(object):
@@ -61,16 +58,12 @@ class LoadImageFromFile(object):
                                 results['img_info']['filename'])
         else:
             filename = results['img_info']['filename']
-        print(f"filename in loading {filename}")
-        img_mat = sio.loadmat(filename)
-        img_x = img_mat["vxSample"]
-        img_y = img_mat["vySample"]
-        img = np.stack((img_x, img_y, np.zeros(img_x.shape)), -1)
-            
+        img_bytes = self.file_client.get(filename)
+        img = mmcv.imfrombytes(
+            img_bytes, flag=self.color_type, backend=self.imdecode_backend)
         if self.to_float32:
             img = img.astype(np.float32)
-        temp_img = (img - img.min()) / (img.max() - img.min())
-        mpimg.imsave(save_dir+"loading_image_from_file.png", temp_img)
+
         results['filename'] = filename
         results['ori_filename'] = results['img_info']['filename']
         results['img'] = img
@@ -136,11 +129,16 @@ class LoadAnnotations(object):
                                 results['ann_info']['seg_map'])
         else:
             filename = results['ann_info']['seg_map']
-        print(filename)
         img_bytes = self.file_client.get(filename)
         gt_semantic_seg = mmcv.imfrombytes(
             img_bytes, flag='unchanged',
             backend=self.imdecode_backend).squeeze().astype(np.uint8)
+        # reduce zero_label
+        if self.reduce_zero_label:
+            # avoid using underflow conversion
+            gt_semantic_seg[gt_semantic_seg == 0] = 255
+            gt_semantic_seg = gt_semantic_seg - 1
+            gt_semantic_seg[gt_semantic_seg == 254] = 255
         # modify if custom classes
         if results.get('label_map', None) is not None:
             # Add deep copy to solve bug of repeatedly
@@ -149,14 +147,7 @@ class LoadAnnotations(object):
             gt_semantic_seg_copy = gt_semantic_seg.copy()
             for old_id, new_id in results['label_map'].items():
                 gt_semantic_seg[gt_semantic_seg_copy == old_id] = new_id
-        # reduce zero_label
-        mpimg.imsave(save_dir+"loading_annot.png", gt_semantic_seg)
-        if self.reduce_zero_label:
-            # avoid using underflow conversion
-            gt_semantic_seg[gt_semantic_seg == 0] = 255
-            gt_semantic_seg = gt_semantic_seg - 1
-            gt_semantic_seg[gt_semantic_seg == 254] = 255
-        results['gt_semantic_seg'] = gt_semantic_seg / 255# this / 255 rescales the annots to 0 and 1
+        results['gt_semantic_seg'] = gt_semantic_seg / 255 # scaling values 0 - 1
         results['seg_fields'].append('gt_semantic_seg')
         return results
 
