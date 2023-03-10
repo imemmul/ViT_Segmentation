@@ -42,4 +42,4 @@ if __name__ == '__main__':
     # predict_random_img(model, data_dir, label_dir)
     print(model)
     print(mmseg.__version__)
-    train_segmentor(model=model, dataset=datasets, cfg=cfg, validate=False)
+    train_segmentor(model=model, dataset=datasets, cfg=cfg, validate=True)

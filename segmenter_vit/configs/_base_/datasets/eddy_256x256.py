@@ -3,8 +3,8 @@ dataset_type = 'EddyDatasetREGISTER'
 data_root = "/cta/users/emir/dev/datasets/eddy_dataset/"
 train_dir = "train/images_png/"
 train_annot= "train/annotations/eddy/"
-valid_dir = "valid/images_png/"
-valid_annot = "valid/annotations/eddy/"
+valid_dir = "val/images_png/"
+valid_annot = "val/annotations/eddy/"
 # data_root = '/home/emir/Desktop/dev/myResearch/dataset/dataset_eddy/data4test/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
